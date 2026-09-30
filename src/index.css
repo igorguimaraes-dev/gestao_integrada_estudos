@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primaria: #3167e3;
+  --color-primaria-hover: #2858c9;
+  --color-primaria-suave: #eef3fd;
+  --color-primaria-clara: #8eaff7;
+  --color-navy: #12233f;
+  --color-navy-claro: #1d3c72;
+  --color-navy-solido: #172b4d;
+  --color-fundo: #ffffff;
+  --color-fundo-sutil: #f7f9fc;
+  --color-superficie: #ffffff;
+  --color-borda: #dce1ea;
+  --color-borda-forte: #c4cddc;
+  --color-texto-forte: #18212f;
+  --color-texto: #2b3648;
+  --color-texto-medio: #546176;
+  --color-texto-suave: #7b8698;
+  --color-texto-fraco: #a0a8b5;
+  --color-fundo-dark: #0e1b30;
+  --color-fundo-sutil-dark: #12233f;
+  --color-superficie-dark: #16294a;
+  --color-borda-dark: #243a63;
+  --color-borda-dark-sutil: #ffffff1e;
+  --color-texto-forte-dark: #eef2f9;
+  --color-texto-medio-dark: #b7c5db;
+  --color-texto-suave-dark: #8194b3;
+  --color-sucesso: #12a66a;
+  --color-sucesso-suave: #ecfdf3;
+  --color-alerta: #f59e0b;
+  --color-alerta-suave: #fef6e7;
+  --color-perigo: #d92d4e;
+  --color-perigo-suave: #fdeef1;
+  --radius-controle: 9px;
+  --radius-card: 14px;
+  --radius-painel: 18px;
+  --shadow-sutil: 0 1px 2px #18212f0a;
+  --shadow-card: 0 2px 8px #18212f0f;
+  --shadow-primaria: 0 6px 15px #3167e329;
+  --shadow-foco: 0 0 0 3px #3167e312;
+  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Manrope', 'DM Sans', sans-serif;
+}
+
+@layer components {
+  .campo {
+    height: 45px;
+    border: 1px solid var(--color-borda);
+    border-radius: var(--radius-controle);
+    outline: 0;
+    background: var(--color-superficie);
+    color: var(--color-texto-forte);
+  }
+
+  .campo:focus {
+    border-color: #6488e2;
+    box-shadow: var(--shadow-foco);
+  }
+
+  .botao-primario {
+    height: 45px;
+    border: 0;
+    border-radius: var(--radius-controle);
+    background: var(--color-primaria);
+    color: #fff;
+    box-shadow: var(--shadow-primaria);
+    font-weight: 600;
+  }
+
+  .botao-primario:hover {
+    background: var(--color-primaria-hover);
+  }
+
+  .botao-secundario {
+    height: 45px;
+    border: 1px solid var(--color-borda);
+    border-radius: var(--radius-controle);
+    background: var(--color-superficie);
+    color: var(--color-texto);
+    font-weight: 600;
+  }
+
+  .dark .campo {
+    border-color: var(--color-borda-dark);
+    background: var(--color-superficie-dark);
+    color: var(--color-texto-forte-dark);
+  }
+
+  .dark .botao-secundario {
+    border-color: var(--color-borda-dark);
+    background: var(--color-superficie-dark);
+    color: var(--color-texto-forte-dark);
+  }
+}
+
+/* A grade resumida é o modo principal; o detalhamento permanece disponível no código. */
+#planejador-cenarios .grade-detalhada {
+  display: none;
+}

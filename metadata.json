@@ -1,0 +1,6 @@
+{
+  "name": "Gestão Integrada",
+  "description": "Sistema operacional para empresas prestadoras de serviço. Da proposta ao pagamento em um só fluxo.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

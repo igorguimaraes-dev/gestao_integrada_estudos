@@ -1,0 +1,12 @@
+node_modules/
+# Contexto local de agentes (Claude, Codex). Não versionar.
+.claude/
+.codex/
+.worktrees/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example

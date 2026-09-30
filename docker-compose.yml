@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: gestao-integrada-postgres
+    environment:
+      POSTGRES_DB: gestao_integrada
+      POSTGRES_USER: gestao
+      POSTGRES_PASSWORD: gestao_local
+    ports:
+      - "5432:5432"
+    volumes:
+      - gestao_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gestao -d gestao_integrada"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  gestao_postgres_data:
