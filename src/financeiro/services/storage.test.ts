@@ -1,54 +1,43 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { mesclarPrestadoresImportados } from '../data/prestadoresImportados';
-import { DATABASE_STORAGE_KEYS, StorageService } from './storage';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { DATABASE_STORAGE_KEYS as KEYS, StorageService } from './storage';
 
-describe('StorageService.hidratarDoBanco', () => {
-  beforeEach(() => {
-    localStorage.clear();
+describe('ambiente de apresentacao', () => {
+  beforeEach(() => localStorage.clear());
+  it('substitui dados antigos por uma demonstracao completa', () => {
+    localStorage.setItem(KEYS.CLIENTES, JSON.stringify([{ id: 'cliente-real' }]));
+    localStorage.setItem(KEYS.DATA_MODE, 'asaas-production');
+    localStorage.setItem('agencia_financeiro_lancamentos', 'dados antigos');
+    StorageService.inicializarDemonstracao();
+    expect(StorageService.getClientES().length).toBeGreaterThan(0);
+    expect(StorageService.getClientES().some(c => c.id === 'cliente-real')).toBe(false);
+    expect(StorageService.getFornecedores().length).toBeGreaterThan(0);
+    expect(StorageService.getLancamentos().length).toBeGreaterThan(0);
+    expect(StorageService.getExtratoTransacoes().length).toBeGreaterThan(0);
+    expect(localStorage.getItem('agencia_financeiro_lancamentos')).toBeNull();
   });
-
-  afterEach(() => {
+  it('preserva edicoes da apresentacao sem recuperar dados remotos', async () => {
+    StorageService.inicializarDemonstracao();
+    const cliente = StorageService.getClientES()[0];
+    StorageService.saveCliente({ ...cliente, nomeRazaoSocial: 'Cliente editado' });
+    StorageService.inicializarDemonstracao();
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    await StorageService.hidratarDoBanco();
+    await StorageService.sincronizarComBanco();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(StorageService.getClientES()[0].nomeRazaoSocial).toBe('Cliente editado');
     vi.unstubAllGlobals();
   });
 
-  it('normaliza todo o estado remoto antes de gravá-lo no navegador', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        state: {
-          [DATABASE_STORAGE_KEYS.CATEGORIAS]: [{ id: 'categoria-1', nome: 'Emiss�o de notas fiscais' }],
-          [DATABASE_STORAGE_KEYS.CLIENTES]: [{ id: 'cliente-1', nomeRazaoSocial: 'HC Com�rcio de Perfilados e A�o LTDA' }],
-          [DATABASE_STORAGE_KEYS.LANCAMENTOS]: [{
-            id: 'lancamento-1',
-            descricao: 'Transação efetuada com o cart�o Dubbo Marketing',
-          }],
-          [DATABASE_STORAGE_KEYS.FORNECEDORES]: mesclarPrestadoresImportados([]),
-        },
-      }),
-    }));
-
-    await StorageService.hidratarDoBanco();
-
-    expect(JSON.parse(localStorage.getItem(DATABASE_STORAGE_KEYS.CATEGORIAS) || '[]')).toEqual([
-      expect.objectContaining({ nome: 'Emissão de notas fiscais' }),
-    ]);
-    expect(JSON.parse(localStorage.getItem(DATABASE_STORAGE_KEYS.CLIENTES) || '[]')).toEqual([
-      expect.objectContaining({ nomeRazaoSocial: 'HC Comércio de Perfilados e Aço LTDA' }),
-    ]);
-    expect(JSON.parse(localStorage.getItem(DATABASE_STORAGE_KEYS.LANCAMENTOS) || '[]')).toEqual([
-      expect.objectContaining({ descricao: 'Transação efetuada com o cartão Dubbo Marketing' }),
-    ]);
-
-    const chamadasFetch = vi.mocked(fetch).mock.calls;
-    expect(chamadasFetch).toHaveLength(2);
-    const [, opcoesDaSincronizacao] = chamadasFetch[1];
-    expect(opcoesDaSincronizacao).toMatchObject({ method: 'PUT' });
-    expect(JSON.parse(String(opcoesDaSincronizacao?.body))).toMatchObject({
-      state: {
-        [DATABASE_STORAGE_KEYS.LANCAMENTOS]: [
-          expect.objectContaining({ descricao: 'Transação efetuada com o cartão Dubbo Marketing' }),
-        ],
-      },
-    });
+  it('oferece movimentos pendentes conciliáveis e vínculos consistentes', () => {
+    StorageService.carregarDadosFicticios();
+    const extrato = StorageService.getExtratoTransacoes();
+    expect(extrato.some(item => !item.conciliado)).toBe(true);
+    expect(extrato.some(item => item.conciliado)).toBe(true);
+    for (const item of extrato) {
+      expect(Boolean(item.lancamentoIdVinculado)).toBe(item.conciliado);
+      const id = item.id.replace('demo-extrato-', '');
+      expect(StorageService.getLancamentos().find(l => l.id === id)?.conciliado).toBe(item.conciliado);
+    }
   });
 });

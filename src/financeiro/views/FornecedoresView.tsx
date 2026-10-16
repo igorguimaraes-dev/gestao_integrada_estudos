@@ -323,7 +323,7 @@ export const FornecedoresView: React.FC = () => {
                   type="text"
                   value={cnpjCpf}
                   onChange={(e) => setCnpjCpf(e.target.value)}
-                  placeholder="00.000.000/0001-00"
+                  placeholder="00.000.000/0000-00"
                   className="w-full rounded-[var(--radius-controle)] border border-borda-forte dark:border-borda-dark bg-superficie dark:bg-navy px-3 py-2"
                 />
               </div>

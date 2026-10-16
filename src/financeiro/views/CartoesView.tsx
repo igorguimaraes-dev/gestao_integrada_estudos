@@ -33,7 +33,7 @@ export const CartoesView: React.FC = () => {
 
   const cobrancasCartao = useMemo(
     () => lancamentos
-      .filter((l) => l.tipo === 'receita' && l.formaPagamento === 'cartao' && l.tags.includes('asaas') && isLancamentoNoPeriodo(l))
+      .filter((l) => l.tipo === 'receita' && l.formaPagamento === 'cartao' && isLancamentoNoPeriodo(l))
       .sort((a, b) => b.dataVencimento.localeCompare(a.dataVencimento)),
     [lancamentos, isLancamentoNoPeriodo],
   );
@@ -43,7 +43,7 @@ export const CartoesView: React.FC = () => {
   );
   const despesasFatura = useMemo(
     () => lancamentos
-      .filter((l) => l.tipo === 'despesa' && l.tags.includes('importacao-fatura-cartao') && isLancamentoNoPeriodo(l))
+      .filter((l) => l.tipo === 'despesa' && (l.cartaoCreditoId || l.tags.includes('importacao-fatura-cartao')) && isLancamentoNoPeriodo(l))
       .sort((a, b) => b.dataVencimento.localeCompare(a.dataVencimento)),
     [lancamentos, isLancamentoNoPeriodo],
   );
@@ -95,10 +95,10 @@ export const CartoesView: React.FC = () => {
 
   const importarFatura = () => {
     const itensSelecionados = itensFatura.filter((item) => item.selecionado);
-    const contaAsaas = contas.find((conta) => conta.id === 'asaas-saldo-producao') || contas[0];
+    const contaAsaas = contas[0] || contas[0];
     if (!arquivoFatura || itensSelecionados.length === 0) return;
     if (!contaAsaas) {
-      showToast('Sincronize o Asaas antes de importar a fatura para definir a conta financeira.', 'erro');
+      showToast('Sincronize o Demonstração antes de importar a fatura para definir a conta financeira.', 'erro');
       return;
     }
     const tagArquivo = `fatura-pdf:${arquivoFatura.name}`;
@@ -146,7 +146,7 @@ export const CartoesView: React.FC = () => {
         <div>
           <h2 className="text-xl font-bold text-texto-medio dark:text-texto-medio-dark">Cartão de Crédito</h2>
           <p className="text-xs sm:text-sm text-texto-medio dark:text-texto-medio-dark">
-            Cobranças de clientes pelo Asaas e despesas importadas da fatura do cartão.
+            Cobranças de clientes pelo Demonstração e despesas importadas da fatura do cartão.
           </p>
         </div>
         <button
@@ -161,8 +161,8 @@ export const CartoesView: React.FC = () => {
       <div className="flex gap-3 rounded-[var(--radius-card)] border border-primaria bg-primaria-suave p-3 text-xs text-primaria dark:border-borda-dark/60 dark:bg-navy-claro/30 dark:text-primaria-clara">
         <Info className="mt-0.5 h-4 w-4 shrink-0" />
         <p>
-          A API do Asaas não fornece cartões corporativos da empresa, limites, faturas bancárias ou dados completos do cartão.
-          Esta tela mostra somente cobranças Asaas sincronizadas por cartão, sem armazenar dados sensíveis.
+          A API do Demonstração não fornece cartões corporativos da empresa, limites, faturas bancárias ou dados completos do cartão.
+          Esta tela mostra somente cobranças Demonstração sincronizadas por cartão, sem armazenar dados sensíveis.
         </p>
       </div>
 
@@ -177,13 +177,13 @@ export const CartoesView: React.FC = () => {
         <EmptyState
           icon={CreditCard}
           titulo="Nenhuma cobrança por cartão no período"
-          descricao="Quando o Asaas registrar e a sincronização importar uma cobrança com pagamento por cartão de crédito, ela aparecerá aqui."
+          descricao="Quando o Demonstração registrar e a sincronização importar uma cobrança com pagamento por cartão de crédito, ela aparecerá aqui."
         />
       ) : (
         <div className="overflow-hidden rounded-[var(--radius-card)] border border-borda bg-superficie shadow-sutil dark:border-borda-dark dark:bg-navy">
           <div className="flex items-center justify-between border-b border-borda px-4 py-3 dark:border-borda-dark">
             <h3 className="text-sm font-bold text-texto-medio dark:text-texto-medio-dark">Cobranças sincronizadas</h3>
-            <span className="text-xs text-texto-medio">Origem: Asaas</span>
+            <span className="text-xs text-texto-medio">Origem: Demonstração</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[680px] text-left text-xs">
@@ -201,7 +201,7 @@ export const CartoesView: React.FC = () => {
                   <tr key={cobranca.id} className="hover:bg-fundo-sutil/70 dark:hover:bg-fundo-sutil/40">
                     <td className="px-4 py-3 font-medium text-texto-medio dark:text-texto-medio-dark">{cobranca.descricao}</td>
                     <td className="px-4 py-3 text-texto-medio dark:text-texto-medio-dark">
-                      {cobranca.clienteId ? clientesPorId.get(cobranca.clienteId) || 'Cliente Asaas' : '—'}
+                      {cobranca.clienteId ? clientesPorId.get(cobranca.clienteId) || 'Cliente Demonstração' : '—'}
                     </td>
                     <td className="px-4 py-3 text-texto-medio dark:text-texto-medio-dark">{formatarDataBR(cobranca.dataVencimento)}</td>
                     <td className="px-4 py-3">
@@ -223,8 +223,8 @@ export const CartoesView: React.FC = () => {
       <div className="overflow-hidden rounded-[var(--radius-card)] border border-borda bg-superficie shadow-sutil dark:border-borda-dark dark:bg-navy">
         <div className="flex items-center justify-between border-b border-borda px-4 py-3 dark:border-borda-dark">
           <div>
-            <h3 className="text-sm font-bold text-texto-medio dark:text-texto-medio-dark">Itens da fatura importada</h3>
-            <p className="mt-0.5 text-[11px] text-texto-medio">Despesas locais originadas de um PDF enviado por você.</p>
+            <h3 className="text-sm font-bold text-texto-medio dark:text-texto-medio-dark">Despesas do cartão</h3>
+            <p className="mt-0.5 text-[11px] text-texto-medio">Itens fictícios da demonstração e faturas importadas localmente.</p>
           </div>
           <span className="text-xs text-texto-medio">{despesasFatura.length} itens</span>
         </div>

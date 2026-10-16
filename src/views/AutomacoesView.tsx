@@ -5,7 +5,7 @@ export const AutomacoesView: React.FC = () => {
   const [automations, setAutomations] = useState([
     {
       id: '1',
-      title: 'Contrato assinado → Criar cobrança Asaas',
+      title: 'Contrato assinado → Criar cobrança Demonstração',
       trigger: 'Contrato aprovado internamente',
       condition: 'Valor mensal > R$ 0',
       action: 'Criar assinatura recorrente e enviar link Pix',
@@ -15,7 +15,7 @@ export const AutomacoesView: React.FC = () => {
     {
       id: '2',
       title: 'Pagamento confirmado → Emitir NFS-e',
-      trigger: 'Webhook de baixa de pagamento no Asaas',
+      trigger: 'Webhook de baixa de pagamento no Demonstração',
       condition: 'NFS-e ainda não emitida',
       action: 'Emitir nota fiscal na prefeitura e enviar ao cliente',
       active: true,
@@ -55,7 +55,7 @@ export const AutomacoesView: React.FC = () => {
           <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex items-center gap-2.5">
             <h1 className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[24px] font-bold text-[var(--color-texto-forte)]">Automações Visuais</h1>
             <span className="dark:bg-fundo-dark dark:text-texto-forte-dark px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#ECFDF3] text-[#12A66A]">
-              4 ativas em produção
+              4 exemplos de automação
             </span>
           </div>
           <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[13px] text-[var(--color-texto-medio)] mt-0.5">

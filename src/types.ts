@@ -69,7 +69,7 @@ export interface Contract {
   dueDay: number;
   status: 'rascunho' | 'aguardando_assinatura' | 'ativo' | 'a_renovar' | 'cancelado';
   progressStep: number; // 1: Criado, 2: Enviado, 3: Assinado, 4: Cobrança config, 5: Ativo, 6: Renovação
-  asaasStatus: 'sincronizado' | 'pendente' | 'erro';
+  asaasStatus: 'pendente' | 'erro';
   responsible: string;
   reajusteIndex: string;
   lastInvoiceSent?: string;
@@ -87,7 +87,7 @@ export interface ReceivableItem {
   status: 'recebida' | 'pendente' | 'vencida' | 'agendada' | 'cancelada';
   invoiceStatus: 'emitida' | 'pendente' | 'erro' | 'nao_aplicavel';
   sentNotification: boolean;
-  provider: 'asaas' | 'manual';
+  provider: 'manual';
   paidAt?: string;
 }
 
@@ -226,7 +226,7 @@ export interface BankAccount {
   pendingReconciliationCount: number;
   lastSyncDate: string;
   lastImportedDate: string;
-  provider: 'pluggy' | 'asaas' | 'ofx' | 'open_finance';
+  provider: 'pluggy' | 'asaas' | 'ofx' | 'open_finance' | 'manual';
 }
 
 export interface BankTransaction {

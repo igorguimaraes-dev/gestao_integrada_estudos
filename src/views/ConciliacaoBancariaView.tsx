@@ -35,7 +35,6 @@ import {
 import { BankAccount, BankTransaction, RouteId } from '../types';
 import { formatCurrency, formatCurrencyDetailed } from '../utils';
 import { IntegrationLogo } from '../components/IntegrationLogo';
-import { syncAsaasToFinance } from '../financeiro/services/asaasSync';
 import { StorageService } from '../financeiro/services/storage';
 import type { Categoria } from '../financeiro/types';
 
@@ -73,7 +72,7 @@ const canalDoExtrato = (descricao: string): BankTransaction['channel'] => {
   return 'outro';
 };
 
-function adaptarSnapshotAsaas(estado: EstadoFinanceiroPersistido): {
+function adaptarSnapshotDemonstracao(estado: EstadoFinanceiroPersistido): {
   accounts: BankAccount[];
   transactions: BankTransaction[];
   latestPeriod?: string;
@@ -84,25 +83,23 @@ function adaptarSnapshotAsaas(estado: EstadoFinanceiroPersistido): {
   const clientes = Array.isArray(estado.gestao_fin_clientes_v1) ? estado.gestao_fin_clientes_v1 as Array<Record<string, unknown>> : [];
   const categorias = Array.isArray(estado.gestao_fin_categorias_v1) ? estado.gestao_fin_categorias_v1 as CategoriaDoExtrato[] : [];
 
-  const contasAsaas = contas.filter((conta) =>
-    String(conta.banco || '').toLocaleLowerCase('pt-BR') === 'asaas' || String(conta.id || '').startsWith('asaas-')
-  );
+  const contasDemonstracao = contas;
   const lancamentosPorId = new Map(lancamentos.map((lancamento) => [String(lancamento.id), lancamento]));
   const clientesPorId = new Map(clientes.map((cliente) => [String(cliente.id), cliente]));
 
   const transactions: BankTransaction[] = extrato
-    .filter((movimento) => !movimento.ignorado && contasAsaas.some((conta) => String(conta.id) === String(movimento.contaBancariaId)))
+    .filter((movimento) => !movimento.ignorado && contasDemonstracao.some((conta) => String(conta.id) === String(movimento.contaBancariaId)))
     .map((movimento) => {
       const lancamento = lancamentosPorId.get(String(movimento.lancamentoIdVinculado || ''));
       const cliente = lancamento ? clientesPorId.get(String(lancamento.clienteId || '')) : undefined;
-      const descricao = String(movimento.descricao || 'Movimentação Asaas');
+      const descricao = String(movimento.descricao || 'Movimentação Demonstracao');
       const valor = Number(movimento.valorCents || 0) / 100;
       const data = String(movimento.data || '');
       const categoriaId = String(movimento.categoriaId || '');
       const categoriaCadastrada = categorias.find((item) => item.id === categoriaId);
       const vinculada = Boolean(movimento.conciliado);
       const categoria = String(movimento.categoriaNome || categoriaCadastrada?.nome || categoriaCadastrada?.subcategoria || '');
-      const favorecido = String(cliente?.nomeRazaoSocial || cliente?.nomeFantasia || lancamento?.descricao || 'Asaas');
+      const favorecido = String(cliente?.nomeRazaoSocial || cliente?.nomeFantasia || lancamento?.descricao || 'Demonstracao');
 
       return {
         id: String(movimento.id),
@@ -118,17 +115,17 @@ function adaptarSnapshotAsaas(estado: EstadoFinanceiroPersistido): {
         matchedCategory: categoria,
         matchedCategoryId: categoriaId || undefined,
         matchedSupplierOrClient: favorecido,
-        matchedCostCenter: String(categoriaCadastrada?.grupo || lancamento?.grupo || 'Asaas'),
+        matchedCostCenter: String(categoriaCadastrada?.grupo || lancamento?.grupo || 'Demonstracao'),
         matchedDocumentId: lancamento ? String(lancamento.id) : undefined,
         reconciledAt: vinculada ? formatarData(data) : undefined,
-        reconciledBy: vinculada ? 'Integração Asaas' : undefined,
+        reconciledBy: vinculada ? 'Integração Demonstracao' : undefined,
         aiAnalysis: vinculada ? {
           confidence: 1,
-          explanation: 'Movimentação vinculada automaticamente ao lançamento sincronizado do Asaas.',
+          explanation: 'Movimentação vinculada automaticamente ao lançamento sincronizado do Demonstracao.',
           interpretedEntity: favorecido,
           interpretedCategory: categoria,
-          interpretedCostCenter: String(lancamento?.grupo || 'Asaas'),
-          autoMatchRule: 'Vínculo da integração Asaas',
+          interpretedCostCenter: String(lancamento?.grupo || 'Demonstracao'),
+          autoMatchRule: 'Vínculo da integração Demonstracao',
         } : undefined,
       };
     });
@@ -140,23 +137,23 @@ function adaptarSnapshotAsaas(estado: EstadoFinanceiroPersistido): {
     if (typeof dataIso === 'string' && (!anterior || dataIso > anterior)) ultimoExtratoPorConta.set(movimento.accountId, dataIso);
   });
 
-  const accounts: BankAccount[] = contasAsaas.map((conta) => {
+  const accounts: BankAccount[] = contasDemonstracao.map((conta) => {
     const id = String(conta.id);
     const movimentosPendentes = transactions.filter((movimento) => movimento.accountId === id && movimento.status === 'pendente');
     const dataSaldo = typeof conta.dataSaldoInicial === 'string' ? conta.dataSaldoInicial : undefined;
     return {
       id,
-      bankName: String(conta.nome || 'Asaas Conta Digital'),
-      bankCode: 'asaas',
-      agency: 'Asaas',
-      accountNumber: 'Conta digital',
+      bankName: String(conta.nome || 'Demonstracao Conta Digital'),
+      bankCode: '341',
+      agency: '0000',
+      accountNumber: '00000-0',
       currentBalance: Number(conta.saldoInicial || 0) / 100,
       reconciledBalance: Number(conta.saldoInicial || 0) / 100,
       pendingReconciliationAmount: movimentosPendentes.reduce((total, movimento) => total + Math.abs(movimento.amount), 0),
       pendingReconciliationCount: movimentosPendentes.length,
       lastSyncDate: dataSaldo ? `Sincronizado em ${formatarData(dataSaldo)}` : 'Aguardando sincronização',
       lastImportedDate: formatarData(ultimoExtratoPorConta.get(id)),
-      provider: 'asaas',
+      provider: 'manual',
     };
   });
 
@@ -193,15 +190,15 @@ export const ConciliacaoBancariaView: React.FC<ConciliacaoBancariaViewProps> = (
   // Active bank account
   const [integratedAccounts, setIntegratedAccounts] = useState<BankAccount[] | null>(null);
   const [categoriasFinanceiras, setCategoriasFinanceiras] = useState<CategoriaDoExtrato[]>([]);
-  const [selectedAccountId, setSelectedAccountId] = useState<string>(accounts[0]?.id || 'asaas-saldo-producao');
-  const [isSyncingAsaas, setIsSyncingAsaas] = useState(false);
+  const [selectedAccountId, setSelectedAccountId] = useState<string>(accounts[0]?.id || 'demo-saldo-producao');
+  const [isSyncingDemonstracao, setIsSyncingDemonstracao] = useState(false);
   const [integrationLoadError, setIntegrationLoadError] = useState<string | null>(null);
   const fallbackAccount: BankAccount = {
     id: 'acc-itau',
     bankName: 'Itaú - CC',
     bankCode: '341',
-    agency: '0451',
-    accountNumber: '19.824-3',
+    agency: '0000',
+    accountNumber: '00000-0',
     currentBalance: -8433.59,
     reconciledBalance: 51820.62,
     pendingReconciliationAmount: 60254.21,
@@ -223,43 +220,45 @@ export const ConciliacaoBancariaView: React.FC<ConciliacaoBancariaViewProps> = (
   // Interactive local transactions state for live updates
   const [txs, setTxs] = useState<BankTransaction[]>(initialTxList);
 
-  const aplicarSnapshotAsaas = useCallback((estado: EstadoFinanceiroPersistido) => {
-    const snapshot = adaptarSnapshotAsaas(estado);
+  const aplicarSnapshotDemonstracao = useCallback((estado: EstadoFinanceiroPersistido) => {
+    const snapshot = adaptarSnapshotDemonstracao(estado);
     setIntegratedAccounts(snapshot.accounts);
     setTxs(snapshot.transactions);
     setCategoriasFinanceiras(Array.isArray(estado.gestao_fin_categorias_v1) ? estado.gestao_fin_categorias_v1 as CategoriaDoExtrato[] : []);
     setSelectedTxIds([]);
-    setSelectedAccountId(snapshot.accounts[0]?.id || 'asaas-saldo-producao');
+    setSelectedAccountId(snapshot.accounts[0]?.id || 'demo-saldo-producao');
     if (snapshot.latestPeriod) setCurrentPeriod(snapshot.latestPeriod);
   }, []);
 
-  const carregarDadosAsaas = useCallback(async () => {
-    const response = await fetch('/api/persistence/state');
-    if (!response.ok) throw new Error('Não foi possível ler os dados sincronizados do Asaas.');
-    const payload = await response.json();
-    aplicarSnapshotAsaas((payload?.state || {}) as EstadoFinanceiroPersistido);
-  }, [aplicarSnapshotAsaas]);
+  const carregarDadosDemonstracao = useCallback(async () => {
+    const dados = JSON.parse(StorageService.exportarBackup());
+    aplicarSnapshotDemonstracao({
+      gestao_fin_contas_v1: dados.contas, gestao_fin_lancamentos_v1: dados.lancamentos,
+      gestao_fin_clientes_v1: dados.clientes, gestao_fin_categorias_v1: dados.categorias,
+      gestao_fin_extrato_transacoes_v1: dados.extratoTransacoes,
+    });
+  }, [aplicarSnapshotDemonstracao]);
 
   useEffect(() => {
-    carregarDadosAsaas().catch(() => {
-      setIntegrationLoadError('Não foi possível carregar o snapshot da integração Asaas.');
+    carregarDadosDemonstracao().catch(() => {
+      setIntegrationLoadError('Não foi possível carregar o snapshot da integração Demonstracao.');
     });
-  }, [carregarDadosAsaas]);
+  }, [carregarDadosDemonstracao]);
 
-  const sincronizarAsaas = async () => {
-    setIsSyncingAsaas(true);
+  const sincronizarDemonstracao = async () => {
+    setIsSyncingDemonstracao(true);
     setIntegrationLoadError(null);
     try {
-      const resumo = await syncAsaasToFinance();
-      await StorageService.sincronizarComBanco();
-      await carregarDadosAsaas();
-      onTriggerToast('Asaas sincronizado', `${resumo.transacoesExtrato} movimentações do extrato foram atualizadas.`);
+
+
+      await carregarDadosDemonstracao();
+      onTriggerToast('Demonstracao atualizada', 'Movimentacoes ficticias locais carregadas.');
     } catch (error) {
-      const mensagem = error instanceof Error ? error.message : 'Não foi possível sincronizar com o Asaas.';
+      const mensagem = error instanceof Error ? error.message : 'Não foi possível sincronizar com o Demonstracao.';
       setIntegrationLoadError(mensagem);
-      onTriggerToast('Falha ao sincronizar Asaas', mensagem);
+      onTriggerToast('Falha ao sincronizar Demonstracao', mensagem);
     } finally {
-      setIsSyncingAsaas(false);
+      setIsSyncingDemonstracao(false);
     }
   };
 
@@ -304,16 +303,16 @@ export const ConciliacaoBancariaView: React.FC<ConciliacaoBancariaViewProps> = (
   const availableAccounts = integratedAccounts ?? [];
   const activeAccount = availableAccounts.find((account) => account.id === selectedAccountId) || availableAccounts[0] || {
     ...fallbackAccount,
-    id: 'asaas-saldo-producao',
-    bankName: 'Asaas Conta Digital',
-    bankCode: 'asaas',
+    id: 'demo-saldo-producao',
+    bankName: 'Demonstracao Conta Digital',
+    bankCode: '341',
     currentBalance: 0,
     reconciledBalance: 0,
     pendingReconciliationAmount: 0,
     pendingReconciliationCount: 0,
     lastSyncDate: 'Aguardando sincronização',
     lastImportedDate: '—',
-    provider: 'asaas' as const,
+    provider: 'manual' as const,
   };
 
   // Modal and drawer states
@@ -364,7 +363,7 @@ export const ConciliacaoBancariaView: React.FC<ConciliacaoBancariaViewProps> = (
     accountTxs
       .filter((tx) => tx.amount < 0)
       .reduce<Record<string, { nome: string; total: number; quantidade: number }>>((acumulado, tx) => {
-        const nome = tx.matchedCategory || 'Débitos do extrato Asaas';
+        const nome = tx.matchedCategory || 'Débitos do extrato Demonstracao';
         const atual = acumulado[nome] || { nome, total: 0, quantidade: 0 };
         atual.total += Math.abs(tx.amount);
         atual.quantidade += 1;
@@ -521,8 +520,8 @@ export const ConciliacaoBancariaView: React.FC<ConciliacaoBancariaViewProps> = (
                   <div className="dark:bg-fundo-dark dark:text-texto-forte-dark w-6 h-6 rounded-md bg-[#EC7000] text-white flex items-center justify-center font-bold text-[11px] shrink-0">
                     it
                   </div>
-                ) : activeAccount.bankCode === 'asaas' ? (
-                  <IntegrationLogo logo="asaas" size="sm" className="dark:bg-fundo-dark dark:text-texto-forte-dark w-6 h-6 rounded-md" />
+                ) : activeAccount.bankCode === 'demo' ? (
+                  <IntegrationLogo logo="demo" size="sm" className="dark:bg-fundo-dark dark:text-texto-forte-dark w-6 h-6 rounded-md" />
                 ) : (
                   <div className="dark:bg-fundo-dark dark:text-texto-forte-dark w-6 h-6 rounded-md bg-[#CC0000] text-white flex items-center justify-center font-bold text-[11px] shrink-0">
                     SAN
@@ -553,8 +552,8 @@ export const ConciliacaoBancariaView: React.FC<ConciliacaoBancariaViewProps> = (
                           <div className="dark:bg-fundo-dark dark:text-texto-forte-dark w-5 h-5 rounded-xs bg-[#EC7000] text-white flex items-center justify-center font-bold text-[10px]">
                             it
                           </div>
-                        ) : acc.bankCode === 'asaas' ? (
-                          <IntegrationLogo logo="asaas" size="sm" className="dark:bg-fundo-dark dark:text-texto-forte-dark w-5 h-5 rounded-xs" />
+                        ) : acc.bankCode === 'demo' ? (
+                          <IntegrationLogo logo="demo" size="sm" className="dark:bg-fundo-dark dark:text-texto-forte-dark w-5 h-5 rounded-xs" />
                         ) : (
                           <div className="dark:bg-fundo-dark dark:text-texto-forte-dark w-5 h-5 rounded-xs bg-[#CC0000] text-white flex items-center justify-center font-bold text-[10px]">
                             SAN
@@ -587,13 +586,13 @@ export const ConciliacaoBancariaView: React.FC<ConciliacaoBancariaViewProps> = (
                   <button
                     onClick={() => {
                       setActionsDropdownOpen(false);
-                      void sincronizarAsaas();
+                      void sincronizarDemonstracao();
                     }}
-                    disabled={isSyncingAsaas}
+                    disabled={isSyncingDemonstracao}
                     className="dark:bg-fundo-dark dark:text-texto-forte-dark w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-fundo-sutil text-texto-medio disabled:cursor-wait disabled:opacity-60"
                   >
                     <RefreshCw className="dark:bg-fundo-dark dark:text-texto-forte-dark w-3.5 h-3.5 text-sucesso" />
-                    <span>{isSyncingAsaas ? 'Sincronizando Asaas...' : 'Sincronizar dados do Asaas'}</span>
+                    <span>{isSyncingDemonstracao ? 'Atualizando dados locais...' : 'Atualizar dados locais'}</span>
                   </button>
                   <button
                     onClick={() => {
@@ -655,7 +654,7 @@ export const ConciliacaoBancariaView: React.FC<ConciliacaoBancariaViewProps> = (
           <div>
             <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex items-center gap-1.5 text-texto-medio">
               <Clock className="dark:bg-fundo-dark dark:text-texto-forte-dark w-3.5 h-3.5 text-texto-medio" />
-              <span>Última sincronização Asaas:</span>
+              <span>Última sincronização Demonstracao:</span>
             </div>
             <p className="dark:bg-fundo-dark dark:text-texto-forte-dark font-bold text-texto-medio mt-0.5">
               {activeAccount.lastSyncDate}
@@ -673,7 +672,7 @@ export const ConciliacaoBancariaView: React.FC<ConciliacaoBancariaViewProps> = (
           </div>
 
           <div className="dark:bg-fundo-dark dark:text-texto-forte-dark bg-[#F8F9FC] p-3 rounded-[var(--radius-controle)] border border-[var(--color-borda)]">
-            <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-texto-medio block text-[11px]">Saldo atual informado pelo Asaas</span>
+            <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-texto-medio block text-[11px]">Saldo atual informado pelo Demonstracao</span>
             <div className="dark:bg-fundo-dark dark:text-texto-forte-dark text-base font-bold text-perigo mt-0.5">
               {formatCurrencyDetailed(activeAccount.currentBalance, hideValues)}
             </div>
@@ -872,14 +871,14 @@ export const ConciliacaoBancariaView: React.FC<ConciliacaoBancariaViewProps> = (
               it
             </div>
           ) : (
-            <IntegrationLogo logo="asaas" size="sm" className="dark:bg-fundo-dark dark:text-texto-forte-dark w-4 h-4 rounded-xs" />
+            <IntegrationLogo logo="demo" size="sm" className="dark:bg-fundo-dark dark:text-texto-forte-dark w-4 h-4 rounded-xs" />
           )}
           <span>Lançamentos do banco ({activeAccount.bankName})</span>
         </div>
         <div className="dark:bg-fundo-dark dark:text-texto-forte-dark col-span-2 text-center">Ação / Match IA</div>
         <div className="dark:bg-fundo-dark dark:text-texto-forte-dark col-span-5 flex items-center gap-2">
           <div className="dark:bg-fundo-dark dark:text-texto-forte-dark w-3 h-3 rounded-full bg-[var(--color-primaria)]"></div>
-          <span>Lançamento financeiro vinculado / integração Asaas</span>
+          <span>Lançamento financeiro vinculado / integração Demonstracao</span>
         </div>
       </div>
 
@@ -895,7 +894,7 @@ export const ConciliacaoBancariaView: React.FC<ConciliacaoBancariaViewProps> = (
           <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-texto-medio max-w-md mx-auto">
             {mainTab === 'pendentes'
               ? 'Todas as movimentações bancárias desta conta já foram lidas pela IA e devidamente conciliadas com o financeiro.'
-              : 'Altere os filtros de busca ou sincronize novamente os dados do Asaas.'}
+              : 'Altere os filtros de busca ou sincronize novamente os dados do Demonstracao.'}
           </p>
           {mainTab === 'pendentes' && (
             <button
@@ -1328,7 +1327,7 @@ export const ConciliacaoBancariaView: React.FC<ConciliacaoBancariaViewProps> = (
                     Importar Extrato Bancário
                   </h3>
                   <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-texto-medio">
-                    Compatível com arquivos .OFX e .CSV do Itaú, Santander, Bradesco e Asaas
+                    Compatível com arquivos .OFX e .CSV do Itaú, Santander, Bradesco e Demonstracao
                   </p>
                 </div>
               </div>
@@ -1399,7 +1398,7 @@ export const ConciliacaoBancariaView: React.FC<ConciliacaoBancariaViewProps> = (
                     Análise de Pagamentos por Categoria (IA)
                   </h3>
                   <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-texto-medio">
-                    Débitos identificados no extrato Asaas de {rotuloPeriodo(currentPeriod)}
+                    Débitos identificados no extrato Demonstracao de {rotuloPeriodo(currentPeriod)}
                   </p>
                 </div>
               </div>
@@ -1414,13 +1413,13 @@ export const ConciliacaoBancariaView: React.FC<ConciliacaoBancariaViewProps> = (
             <div className="dark:bg-fundo-dark dark:text-texto-forte-dark space-y-3 text-xs">
               {despesasPorCategoria.length === 0 ? (
                 <p className="dark:bg-fundo-dark dark:text-texto-forte-dark rounded-[var(--radius-controle)] bg-fundo-sutil p-4 text-center text-texto-medio">
-                  Não há débitos no extrato Asaas para este período.
+                  Não há débitos no extrato Demonstracao para este período.
                 </p>
               ) : despesasPorCategoria.map((categoria) => (
                 <div key={categoria.nome} className="dark:bg-fundo-dark dark:text-texto-forte-dark rounded-[var(--radius-controle)] bg-fundo-sutil p-3 flex items-center justify-between">
                   <div>
                     <span className="dark:bg-fundo-dark dark:text-texto-forte-dark font-bold text-texto-medio block">{categoria.nome}</span>
-                    <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[11px] text-texto-medio">{categoria.quantidade} movimentação(ões) do extrato Asaas</span>
+                    <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[11px] text-texto-medio">{categoria.quantidade} movimentação(ões) do extrato Demonstracao</span>
                   </div>
                   <div className="dark:bg-fundo-dark dark:text-texto-forte-dark text-right">
                     <span className="dark:bg-fundo-dark dark:text-texto-forte-dark font-bold text-perigo block">{formatCurrencyDetailed(categoria.total, hideValues)}</span>
@@ -1467,7 +1466,7 @@ export const ConciliacaoBancariaView: React.FC<ConciliacaoBancariaViewProps> = (
 
                 <div className="dark:bg-fundo-dark dark:text-texto-forte-dark p-3 bg-fundo-sutil rounded-[var(--radius-controle)] flex items-center justify-between">
                   <div>
-                    <span className="dark:bg-fundo-dark dark:text-texto-forte-dark font-bold text-texto-medio block">Pró-Labore & Sócios (Pix Marlon)</span>
+                    <span className="dark:bg-fundo-dark dark:text-texto-forte-dark font-bold text-texto-medio block">Pró-Labore & Sócios (Pix Rafael)</span>
                     <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[11px] text-texto-medio">Retirada quinzenal</span>
                   </div>
                   <div className="dark:bg-fundo-dark dark:text-texto-forte-dark text-right">

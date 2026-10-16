@@ -219,7 +219,7 @@ export const ClienteDetalheView: React.FC<ClienteDetalheViewProps> = ({
                         Contrato: Ativo
                       </span>
                       <span className="dark:bg-fundo-dark dark:text-texto-forte-dark px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primaria-suave text-primaria border border-primaria">
-                        Asaas: Cobrança Recorrente Ativa
+                        Demonstração: Cobrança Recorrente Ativa
                       </span>
                     </div>
                   </div>
@@ -244,7 +244,7 @@ export const ClienteDetalheView: React.FC<ClienteDetalheViewProps> = ({
             <div className="dark:bg-fundo-dark dark:text-texto-forte-dark bg-superficie p-5 rounded-[var(--radius-card)] border border-[var(--color-borda)] shadow-sutil">
               <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex items-center justify-between mb-3">
                 <h3 className="dark:bg-fundo-dark dark:text-texto-forte-dark text-sm font-semibold text-[var(--color-texto-forte)]">Cobranças e Pagamentos</h3>
-                <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-[var(--color-texto-medio)]">Integrado com Asaas</span>
+                <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-[var(--color-texto-medio)]">Integrado com Demonstração</span>
               </div>
 
               <div className="dark:bg-fundo-dark dark:text-texto-forte-dark divide-y divide-[var(--color-borda)]">
@@ -330,7 +330,7 @@ export const ClienteDetalheView: React.FC<ClienteDetalheViewProps> = ({
                   + Aditivo contratual
                 </button>
                 <button
-                  onClick={() => onTriggerActionToast('Link público Asaas de pagamento copiado para área de transferência')}
+                  onClick={() => onTriggerActionToast('Link público Demonstração de pagamento copiado para área de transferência')}
                   className="dark:bg-fundo-dark dark:text-texto-forte-dark w-full text-left px-3 py-2 rounded-[var(--radius-controle)] bg-[var(--color-fundo-sutil)] hover:bg-[#EEF0FD] hover:text-[var(--color-primaria)] text-[var(--color-texto)] transition-colors"
                 >
                   🔗 Copiar Link de Cobrança Pix
@@ -377,11 +377,11 @@ export const ClienteDetalheView: React.FC<ClienteDetalheViewProps> = ({
               </div>
               <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex-1 text-xs">
                 <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex items-center justify-between">
-                  <span className="dark:bg-fundo-dark dark:text-texto-forte-dark font-semibold text-[var(--color-texto-forte)]">Pagamento Confirmado (Asaas / Pix)</span>
+                  <span className="dark:bg-fundo-dark dark:text-texto-forte-dark font-semibold text-[var(--color-texto-forte)]">Pagamento Confirmado (Demonstração / Pix)</span>
                   <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[var(--color-texto-suave)]">02/08/2026 às 14:22</span>
                 </div>
                 <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[#475467] mt-1">
-                  Recebimento automático da competência 07/2026 no valor de <strong className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[var(--color-texto-forte)]">{formatCurrencyDetailed(client.monthlyRevenue, hideValues)}</strong> via webhook Asaas.
+                  Recebimento automático da competência 07/2026 no valor de <strong className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[var(--color-texto-forte)]">{formatCurrencyDetailed(client.monthlyRevenue, hideValues)}</strong> via webhook Demonstração.
                 </p>
               </div>
             </div>
@@ -396,7 +396,7 @@ export const ClienteDetalheView: React.FC<ClienteDetalheViewProps> = ({
                   <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[var(--color-texto-suave)]">{client.createdAt}</span>
                 </div>
                 <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[#475467] mt-1">
-                  Contrato principal de prestação de serviços assinado digitalmente por {client.contactName} ({client.contactEmail}). Sincronizado com o Asaas.
+                  Contrato principal de prestação de serviços assinado digitalmente por {client.contactName} ({client.contactEmail}). Sincronizado com o Demonstração.
                 </p>
               </div>
             </div>
@@ -440,7 +440,7 @@ export const ClienteDetalheView: React.FC<ClienteDetalheViewProps> = ({
                 </div>
                 <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex-1 text-xs">
                   <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex items-center justify-between">
-                    <span className="dark:bg-fundo-dark dark:text-texto-forte-dark font-semibold text-[var(--color-texto-forte)]">Cobrança Asaas ({rec.method.toUpperCase()})</span>
+                    <span className="dark:bg-fundo-dark dark:text-texto-forte-dark font-semibold text-[var(--color-texto-forte)]">Cobrança Demonstração ({rec.method.toUpperCase()})</span>
                     <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[var(--color-texto-suave)]">Vencimento: {rec.dueDate}</span>
                   </div>
                   <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[#475467] mt-1">
@@ -500,7 +500,7 @@ export const ClienteDetalheView: React.FC<ClienteDetalheViewProps> = ({
       {activeTab === 'financeiro' && (
         <div className="dark:bg-fundo-dark dark:text-texto-forte-dark bg-superficie rounded-[var(--radius-card)] border border-[var(--color-borda)] p-5 shadow-sutil">
           <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex justify-between items-center mb-4">
-            <h3 className="dark:bg-fundo-dark dark:text-texto-forte-dark text-sm font-semibold text-[var(--color-texto-forte)]">Contas a Receber (Asaas)</h3>
+            <h3 className="dark:bg-fundo-dark dark:text-texto-forte-dark text-sm font-semibold text-[var(--color-texto-forte)]">Contas a Receber (Demonstração)</h3>
             <button
               onClick={() => onOpenQuickCreate('cobranca')}
               className="dark:bg-fundo-dark dark:text-texto-forte-dark px-3 py-1.5 bg-[#12A66A] text-white rounded-[var(--radius-controle)] text-xs font-semibold"

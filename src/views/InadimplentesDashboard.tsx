@@ -53,24 +53,7 @@ export const InadimplentesDashboard: React.FC<InadimplentesDashboardProps> = ({
   }, 0);
 
   const handleWhatsAppSend = (clientName: string, phone: string, amount: number, daysLate: number) => {
-    const cleanPhone = phone.replace(/\D/g, '');
-    const formattedAmount = formatCurrency(amount, hideValues);
-    
-    let msg = '';
-    if (selectedTemplate === 'amigavel') {
-      msg = `Olá ${clientName}, tudo bem? Notamos que há uma fatura em aberto no valor de ${formattedAmount} (vencida há ${daysLate} dias). Podemos ajudar com a 2ª via ou chave Pix para regularização?`;
-    } else if (selectedTemplate === 'urgente') {
-      msg = `Olá ${clientName}, informamos que sua fatura de ${formattedAmount} encontra-se vencida há ${daysLate} dias. Solicitamos a regularização urgente para evitar suspensão dos serviços e encargos adicionais.`;
-    } else {
-      msg = `Prezado(a) ${clientName}, última notificação para regularização de débito pendente no valor de ${formattedAmount} (Atraso de ${daysLate} dias). Evite encaminhamento para protesto.`;
-    }
-
-    const encoded = encodeURIComponent(msg);
-    const url = `https://api.whatsapp.com/send?phone=55${cleanPhone}&text=${encoded}`;
-    
-    // Open WhatsApp link
-    window.open(url, '_blank');
-    onTriggerActionToast(`Mensagem de cobrança via WhatsApp aberta para ${clientName}`);
+    onTriggerActionToast(`Simulacao de lembrete para ${clientName}. Nenhuma mensagem foi enviada.`);
   };
 
   return (

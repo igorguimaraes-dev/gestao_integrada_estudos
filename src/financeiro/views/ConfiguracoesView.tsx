@@ -368,7 +368,7 @@ export const ConfiguracoesView: React.FC = () => {
                 type="text"
                 value={cnpj}
                 onChange={(e) => setCnpj(e.target.value)}
-                placeholder="00.000.000/0001-00"
+                placeholder="00.000.000/0000-00"
                 className="w-full rounded-[var(--radius-controle)] border border-borda-forte dark:border-borda-dark bg-superficie dark:bg-navy px-3 py-2 text-texto-medio dark:text-texto-medio-dark focus:ring-2 focus:ring-primaria focus:outline-hidden"
               />
             </div>
@@ -381,7 +381,7 @@ export const ConfiguracoesView: React.FC = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="financeiro@agencia.com.br"
+                placeholder="financeiro@example.com"
                 className="w-full rounded-[var(--radius-controle)] border border-borda-forte dark:border-borda-dark bg-superficie dark:bg-navy px-3 py-2 text-texto-medio dark:text-texto-medio-dark focus:ring-2 focus:ring-primaria focus:outline-hidden"
               />
             </div>
@@ -394,7 +394,7 @@ export const ConfiguracoesView: React.FC = () => {
                 type="text"
                 value={telefone}
                 onChange={(e) => setTelefone(e.target.value)}
-                placeholder="(11) 98765-4321"
+                placeholder="(00) 00000-0000"
                 className="w-full rounded-[var(--radius-controle)] border border-borda-forte dark:border-borda-dark bg-superficie dark:bg-navy px-3 py-2 text-texto-medio dark:text-texto-medio-dark focus:ring-2 focus:ring-primaria focus:outline-hidden"
               />
             </div>
@@ -678,12 +678,12 @@ export const ConfiguracoesView: React.FC = () => {
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-alerta dark:text-texto-forte-dark" />
           <h3 className="text-sm font-bold text-alerta dark:text-texto-forte-dark">
-            Dados sincronizados do Asaas
+            Dados fictícios para apresentação
           </h3>
         </div>
         <p className="text-xs text-alerta/80 dark:text-texto-forte-dark/80 leading-relaxed">
-          Este módulo não utiliza dados demonstrativos. Clientes, cobranças recebíveis e saldo são atualizados pela integração Asaas.
-          Cartões, equipe, reembolsos e despesas aguardam uma fonte de dados compatível.
+          Clientes, fornecedores, contas, cartões, reembolsos e lançamentos são exemplos fictícios.
+          Restaure o conjunto de demonstração para recomeçar a apresentação. As alterações locais serão substituídas.
         </p>
         <button
           type="button"
@@ -694,7 +694,7 @@ export const ConfiguracoesView: React.FC = () => {
           className="inline-flex items-center gap-1.5 px-4 py-2 bg-alerta-suave hover:bg-alerta-suave text-white rounded-[var(--radius-controle)] text-xs font-semibold cursor-pointer shadow-sutil transition-colors"
         >
           <Sparkles className="w-4 h-4" />
-          <span>Limpar dados financeiros locais</span>
+          <span>Restaurar dados fictícios</span>
         </button>
       </div>
 

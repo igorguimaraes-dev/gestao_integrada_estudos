@@ -43,7 +43,6 @@ import { AutomacoesView } from './views/AutomacoesView';
 import { ConfiguracoesView } from './views/ConfiguracoesView';
 import { InadimplentesDashboard } from './views/InadimplentesDashboard';
 import EmbeddedFinanceiro from './financeiro/EmbeddedFinanceiro';
-import { syncAsaasToFinance } from './financeiro/services/asaasSync';
 import { Login } from './components/Login';
 
 const financialRouteTabs: Partial<Record<RouteId, string>> = {
@@ -133,7 +132,6 @@ export default function App() {
   const [integrations, setIntegrations] = useState(initialIntegrations);
   const [asaasCharges, setAsaasCharges] = useState<AsaasChargeItem[]>(initialAsaasCharges);
   const [serviceInvoices, setServiceInvoices] = useState<ServiceInvoice[]>(initialServiceInvoices);
-  const [isAsaasSyncing, setIsAsaasSyncing] = useState(false);
 
   // Toast System
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -197,12 +195,12 @@ export default function App() {
       const newClient: Client = {
         id: `cli_${Date.now()}`,
         name: data.name || 'Novo Cliente',
-        document: data.document || '00.000.000/0001-00',
+        document: data.document || '00.000.000/0000-00',
         segment: data.segment || 'Serviços',
         contactName: data.contactName || 'Contato Principal',
-        contactEmail: data.contactEmail || 'contato@empresa.com',
-        contactPhone: data.contactPhone || '(11) 99999-9999',
-        responsible: 'Marlon Ribeiro',
+        contactEmail: data.contactEmail || 'contato@example.com',
+        contactPhone: data.contactPhone || '(00) 00000-0000',
+        responsible: 'Rafael Demo',
         services: ['Gestão de Tráfego'],
         financialStatus: 'em_dia',
         healthScore: 'saudavel',
@@ -231,13 +229,13 @@ export default function App() {
         startDate: '01/09/2026',
         endDate: '01/09/2027',
         status: 'ativo',
-        asaasStatus: 'sincronizado',
+        asaasStatus: 'pendente',
         reajusteIndex: 'IPCA',
-        responsible: 'Marlon Ribeiro',
+        responsible: 'Rafael Demo',
         progressStep: 5,
       };
       setContracts((prev) => [newContract, ...prev]);
-      addToast('Contrato gerado com sucesso!', 'Contrato cadastrado e cobrança Asaas pronta para configurar.');
+      addToast('Contrato gerado com sucesso!', 'Contrato cadastrado e cobrança Demonstração pronta para configurar.');
     } else if (type === 'cobranca') {
       const newRec: ReceivableItem = {
         id: `rec_${Date.now()}`,
@@ -251,10 +249,10 @@ export default function App() {
         status: 'pendente',
         invoiceStatus: 'pendente',
         sentNotification: false,
-        provider: 'asaas',
+        provider: 'manual',
       };
       setReceivables((prev) => [newRec, ...prev]);
-      addToast('Cobrança Asaas criada!', `Pix Copia e Cola gerado para ${newRec.clientName}.`);
+      addToast('Cobrança Demonstração criada!', `Pix Copia e Cola gerado para ${newRec.clientName}.`);
     } else if (type === 'proposta') {
       const newDeal: PipelineDeal = {
         id: `deal_${Date.now()}`,
@@ -263,7 +261,7 @@ export default function App() {
         contactName: data.contactName || 'Contato Comercial',
         amount: Number(data.amount) || 6000,
         service: 'Assessoria de Marketing',
-        responsible: 'Marlon Ribeiro',
+        responsible: 'Rafael Demo',
         stage: 'proposta',
         daysInStage: 1,
         probability: 60,
@@ -305,23 +303,6 @@ export default function App() {
   };
 
   const financialTab = financialRouteTabs[currentRoute];
-  const handleAsaasSync = async () => {
-    if (isAsaasSyncing) return;
-    setIsAsaasSyncing(true);
-    try {
-      const { clientes: totalClientes, lancamentos: totalCobrancas, transacoesExtrato } = await syncAsaasToFinance();
-      addToast('Sincronização Asaas concluída', `${totalClientes} clientes, ${totalCobrancas} cobranças e ${transacoesExtrato} movimentos atualizados.`);
-    } catch (error) {
-      addToast(
-        'Sincronização Asaas não realizada',
-        error instanceof Error ? error.message : 'Tente carregar os dados demonstrativos novamente.',
-        'error'
-      );
-    } finally {
-      setIsAsaasSyncing(false);
-    }
-  };
-
   if (!isAuthenticated) {
     return <Login onLogin={() => setIsAuthenticated(true)} />;
   }
@@ -347,8 +328,6 @@ export default function App() {
           onOpenQuickCreate={handleOpenQuickCreate}
           onToggleSidebar={() => setIsSidebarCollapsed((prev) => !prev)}
           onNavigate={(route) => setCurrentRoute(route)}
-          onManualSync={handleAsaasSync}
-          isManualSyncing={isAsaasSyncing}
         />
 
         {/* Dynamic View Body */}
@@ -492,11 +471,11 @@ export default function App() {
         }}
         onAddContract={(c) => {
           setContracts((prev) => [c, ...prev]);
-          addToast('Contrato gerado com sucesso!', 'Contrato cadastrado e cobrança Asaas pronta para configurar.');
+          addToast('Contrato gerado com sucesso!', 'Contrato cadastrado e cobrança Demonstração pronta para configurar.');
         }}
         onAddReceivable={(r) => {
           setReceivables((prev) => [r, ...prev]);
-          addToast('Cobrança Asaas criada!', `Pix Copia e Cola gerado para ${r.clientName}.`);
+          addToast('Cobrança Demonstração criada!', `Pix Copia e Cola gerado para ${r.clientName}.`);
         }}
         onAddDeal={(d) => {
           setPipelineDeals((prev) => [d, ...prev]);

@@ -160,7 +160,7 @@ export function formatarCpfCnpj(doc: string): string {
 }
 
 /**
- * Formata telefone brasileiro: (11) 99999-9999
+ * Formata telefone brasileiro: (00) 00000-0000
  */
 export function formatarTelefone(tel: string): string {
   const limpo = tel.replace(/\D/g, '');

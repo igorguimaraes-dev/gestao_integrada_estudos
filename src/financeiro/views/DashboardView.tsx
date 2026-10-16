@@ -70,7 +70,7 @@ export const DashboardView: React.FC = () => {
   const debitosAsaasDoMes = useMemo(
     () => extratoTransacoes.filter(
       (transacao) =>
-        transacao.id.startsWith('asaas-extrato-') &&
+
         !transacao.ignorado &&
         transacao.valorCents < 0 &&
         transacao.data.slice(0, 7) === mesReferencia
@@ -81,7 +81,7 @@ export const DashboardView: React.FC = () => {
   const movimentacoesAsaasDoMes = useMemo(
     () => extratoTransacoes
       .filter((transacao) =>
-        transacao.id.startsWith('asaas-extrato-') &&
+
         !transacao.ignorado &&
         transacao.data.slice(0, 7) === mesReferencia
       )
@@ -100,7 +100,7 @@ export const DashboardView: React.FC = () => {
   }), [creditosAsaasDoMes, debitosAsaasDoMes]);
 
   const saldoAsaas = useMemo(() => {
-    const conta = contas.find((item) => item.id === 'asaas-saldo-producao');
+    const conta = contas[0];
     return conta ? calcularSaldoConta(conta, lancamentos).saldoAtual : null;
   }, [contas, lancamentos]);
 
@@ -930,13 +930,13 @@ export const DashboardView: React.FC = () => {
                   </div>
                   {saldoAsaas !== null && (
                     <div className="rounded-[var(--radius-card)] border border-primaria p-3 dark:border-borda-dark/60">
-                      <div className="flex items-center justify-between text-xs"><span className="font-semibold text-texto-medio dark:text-texto-medio-dark">Saldo atual no Asaas</span><strong className="text-primaria dark:text-primaria-clara">{formatarMoeda(saldoAsaas)}</strong></div>
+                      <div className="flex items-center justify-between text-xs"><span className="font-semibold text-texto-medio dark:text-texto-medio-dark">Saldo atual no Demonstração</span><strong className="text-primaria dark:text-primaria-clara">{formatarMoeda(saldoAsaas)}</strong></div>
                       <p className="mt-1 text-[11px] text-texto-medio">Saldo retornado pela integração e atualizado no último processo de sincronização.</p>
                     </div>
                   )}
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-[var(--radius-card)] bg-sucesso-suave p-3 dark:bg-superficie-dark/30"><span className="text-[10px] font-semibold uppercase text-sucesso dark:text-texto-forte-dark">Entradas Asaas</span><div className="mt-1 font-bold text-sucesso dark:text-texto-forte-dark">{formatarMoeda(resumoExtratoAsaas.entradas)}</div></div>
-                    <div className="rounded-[var(--radius-card)] bg-perigo-suave p-3 dark:bg-superficie-dark/30"><span className="text-[10px] font-semibold uppercase text-perigo dark:text-texto-forte-dark">Saídas Asaas</span><div className="mt-1 font-bold text-perigo dark:text-texto-forte-dark">{formatarMoeda(resumoExtratoAsaas.saidas)}</div></div>
+                    <div className="rounded-[var(--radius-card)] bg-sucesso-suave p-3 dark:bg-superficie-dark/30"><span className="text-[10px] font-semibold uppercase text-sucesso dark:text-texto-forte-dark">Entradas Demonstração</span><div className="mt-1 font-bold text-sucesso dark:text-texto-forte-dark">{formatarMoeda(resumoExtratoAsaas.entradas)}</div></div>
+                    <div className="rounded-[var(--radius-card)] bg-perigo-suave p-3 dark:bg-superficie-dark/30"><span className="text-[10px] font-semibold uppercase text-perigo dark:text-texto-forte-dark">Saídas Demonstração</span><div className="mt-1 font-bold text-perigo dark:text-texto-forte-dark">{formatarMoeda(resumoExtratoAsaas.saidas)}</div></div>
                   </div>
                   <div className="space-y-2">
                     {contas.filter((conta) => conta.ativa).map((conta) => (
@@ -948,18 +948,18 @@ export const DashboardView: React.FC = () => {
                   </div>
                   <div className="border-t border-borda pt-4 dark:border-borda-dark">
                     <div className="mb-2 flex items-center justify-between">
-                      <h3 className="text-xs font-bold uppercase tracking-wide text-texto-medio">Extrato efetivo do Asaas</h3>
+                      <h3 className="text-xs font-bold uppercase tracking-wide text-texto-medio">Extrato efetivo do Demonstração</h3>
                       <span className="text-xs font-medium text-texto-medio">{movimentacoesAsaasDoMes.length} movimentos</span>
                     </div>
                     <p className="mb-3 text-[11px] text-texto-medio">Movimentações que impactaram o saldo em {mesReferencia.slice(5, 7)}/{mesReferencia.slice(0, 4)}.</p>
                     <div className="space-y-2">
                       {movimentacoesAsaasDoMes.length === 0 ? (
-                        <p className="rounded-[var(--radius-controle)] bg-fundo-sutil p-3 text-xs text-texto-medio dark:bg-superficie-dark">Nenhuma movimentação do Asaas foi sincronizada para este mês. Use “Sincronizar Asaas” para atualizar o extrato.</p>
+                        <p className="rounded-[var(--radius-controle)] bg-fundo-sutil p-3 text-xs text-texto-medio dark:bg-superficie-dark">Nenhuma movimentação fictícia neste mês. Selecione outro período ou restaure os dados fictícios nas configurações.</p>
                       ) : movimentacoesAsaasDoMes.map((transacao) => (
                         <div key={transacao.id} className="flex items-center justify-between gap-3 rounded-[var(--radius-controle)] border border-borda p-3 dark:border-borda-dark">
                           <div className="min-w-0">
                             <span className="block truncate font-medium text-texto-medio dark:text-texto-medio-dark">{transacao.descricao}</span>
-                            <span className="text-xs text-texto-medio">{formatarDataBR(transacao.data)} · {transacao.valorCents >= 0 ? 'Crédito' : 'Débito'} Asaas</span>
+                            <span className="text-xs text-texto-medio">{formatarDataBR(transacao.data)} · {transacao.valorCents >= 0 ? 'Crédito' : 'Débito'} Demonstração</span>
                           </div>
                           <span className={`shrink-0 font-bold tabular-nums ${transacao.valorCents >= 0 ? 'text-sucesso' : 'text-perigo'}`}>
                             {transacao.valorCents >= 0 ? '+' : '−'} {formatarMoeda(Math.abs(transacao.valorCents))}
@@ -978,12 +978,12 @@ export const DashboardView: React.FC = () => {
                     <div className="rounded-[var(--radius-card)] bg-sucesso-suave p-3 text-sucesso dark:bg-superficie-dark/40 dark:text-texto-forte-dark"><span className="text-xs font-semibold uppercase">Realizado</span><div className="mt-1 text-xl font-bold">{formatarMoeda(metricasMesAtual.recRealizada)}</div></div>
                     <div className="rounded-[var(--radius-card)] bg-fundo-sutil p-3 text-texto-medio dark:bg-superficie-dark dark:text-texto-medio-dark"><span className="text-xs font-semibold uppercase">Orçado</span><div className="mt-1 text-xl font-bold">{formatarMoeda(metricasMesAtual.recOrcada)}</div></div>
                   </div>
-                  <p className="text-xs text-texto-medio">Lançamentos realizados: {lancamentos.filter((l) => l.tipo === 'receita' && l.mesCompetencia === mesReferencia && l.status !== 'cancelado' && (l.valorRealizado !== undefined || l.status === 'realizado')).length}. Entradas no extrato Asaas: {creditosAsaasDoMes.length}.</p>
+                  <p className="text-xs text-texto-medio">Lançamentos realizados: {lancamentos.filter((l) => l.tipo === 'receita' && l.mesCompetencia === mesReferencia && l.status !== 'cancelado' && (l.valorRealizado !== undefined || l.status === 'realizado')).length}. Entradas no extrato Demonstração: {creditosAsaasDoMes.length}.</p>
                   <div className="space-y-2">
-                    <h3 className="text-xs font-bold uppercase tracking-wide text-texto-medio">Entradas no extrato Asaas</h3>
-                    {creditosAsaasDoMes.length === 0 ? <p className="text-xs text-texto-medio">Nenhuma entrada do Asaas foi sincronizada para este mês.</p> : creditosAsaasDoMes.map((transacao) => (
+                    <h3 className="text-xs font-bold uppercase tracking-wide text-texto-medio">Entradas no extrato Demonstração</h3>
+                    {creditosAsaasDoMes.length === 0 ? <p className="text-xs text-texto-medio">Nenhuma entrada do Demonstração foi sincronizada para este mês.</p> : creditosAsaasDoMes.map((transacao) => (
                       <div key={transacao.id} className="flex items-center justify-between gap-3 rounded-[var(--radius-controle)] border border-borda p-3 dark:border-borda-dark">
-                        <div className="min-w-0"><span className="block truncate font-medium text-texto-medio dark:text-texto-medio-dark">{transacao.descricao}</span><span className="text-xs text-texto-medio">{formatarDataBR(transacao.data)} · Crédito Asaas</span></div>
+                        <div className="min-w-0"><span className="block truncate font-medium text-texto-medio dark:text-texto-medio-dark">{transacao.descricao}</span><span className="text-xs text-texto-medio">{formatarDataBR(transacao.data)} · Crédito Demonstração</span></div>
                         <span className="shrink-0 font-bold tabular-nums text-sucesso">{formatarMoeda(transacao.valorCents)}</span>
                       </div>
                     ))}
@@ -993,12 +993,12 @@ export const DashboardView: React.FC = () => {
 
               {detalheCard === 'despesas' && (
                 <>
-                  <p className="text-texto-medio dark:text-texto-medio-dark">Soma dos débitos efetivados no extrato Asaas e de despesas realizadas que ainda não estejam representadas nesse extrato. Assim, a mesma saída não é contada duas vezes.</p>
+                  <p className="text-texto-medio dark:text-texto-medio-dark">Soma dos débitos efetivados no extrato Demonstração e de despesas realizadas que ainda não estejam representadas nesse extrato. Assim, a mesma saída não é contada duas vezes.</p>
                   <div className="rounded-[var(--radius-card)] bg-perigo-suave p-3 text-perigo dark:bg-superficie-dark/40 dark:text-texto-forte-dark"><span className="text-xs font-semibold uppercase">Total realizado</span><div className="mt-1 text-2xl font-bold">{formatarMoeda(metricasMesAtual.despRealizada)}</div></div>
                   <div className="space-y-2">
-                    {debitosAsaasDoMes.length === 0 ? <p className="text-xs text-texto-medio">Nenhum débito do Asaas foi sincronizado para este mês.</p> : debitosAsaasDoMes.map((transacao) => (
+                    {debitosAsaasDoMes.length === 0 ? <p className="text-xs text-texto-medio">Nenhum débito do Demonstração foi sincronizado para este mês.</p> : debitosAsaasDoMes.map((transacao) => (
                       <div key={transacao.id} className="flex items-center justify-between gap-3 rounded-[var(--radius-controle)] border border-borda p-3 dark:border-borda-dark">
-                        <div className="min-w-0"><span className="block truncate font-medium text-texto-medio dark:text-texto-medio-dark">{transacao.descricao}</span><span className="text-xs text-texto-medio">{formatarDataBR(transacao.data)} · Extrato Asaas</span></div>
+                        <div className="min-w-0"><span className="block truncate font-medium text-texto-medio dark:text-texto-medio-dark">{transacao.descricao}</span><span className="text-xs text-texto-medio">{formatarDataBR(transacao.data)} · Extrato Demonstração</span></div>
                         <span className="shrink-0 font-bold tabular-nums text-perigo">{formatarMoeda(Math.abs(transacao.valorCents))}</span>
                       </div>
                     ))}
@@ -1016,14 +1016,14 @@ export const DashboardView: React.FC = () => {
                   </div>
                   <p className="text-xs text-texto-medio">Margem líquida: {formatarPorcentagem(metricasMesAtual.margemRealizada)}. Ela compara o resultado com as receitas realizadas.</p>
                   <div className="rounded-[var(--radius-card)] border border-borda p-3 dark:border-borda-dark">
-                    <div className="flex items-center justify-between text-xs font-semibold text-texto-medio dark:text-texto-medio-dark"><span>Variação no extrato Asaas</span><span>{formatarMoeda(resumoExtratoAsaas.entradas - resumoExtratoAsaas.saidas)}</span></div>
+                    <div className="flex items-center justify-between text-xs font-semibold text-texto-medio dark:text-texto-medio-dark"><span>Variação no extrato Demonstração</span><span>{formatarMoeda(resumoExtratoAsaas.entradas - resumoExtratoAsaas.saidas)}</span></div>
                     <p className="mt-1 text-[11px] text-texto-medio">{movimentacoesAsaasDoMes.length} movimentações sincronizadas no período: {creditosAsaasDoMes.length} entradas e {debitosAsaasDoMes.length} saídas.</p>
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-xs font-bold uppercase tracking-wide text-texto-medio">Extrato efetivo do Asaas</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-wide text-texto-medio">Extrato efetivo do Demonstração</h3>
                     {movimentacoesAsaasDoMes.length === 0 ? <p className="text-xs text-texto-medio">Nenhuma movimentação foi sincronizada para este mês.</p> : movimentacoesAsaasDoMes.map((transacao) => (
                       <div key={transacao.id} className="flex items-center justify-between gap-3 rounded-[var(--radius-controle)] border border-borda p-3 dark:border-borda-dark">
-                        <div className="min-w-0"><span className="block truncate font-medium text-texto-medio dark:text-texto-medio-dark">{transacao.descricao}</span><span className="text-xs text-texto-medio">{formatarDataBR(transacao.data)} · Extrato Asaas</span></div>
+                        <div className="min-w-0"><span className="block truncate font-medium text-texto-medio dark:text-texto-medio-dark">{transacao.descricao}</span><span className="text-xs text-texto-medio">{formatarDataBR(transacao.data)} · Extrato Demonstração</span></div>
                         <span className={`shrink-0 font-bold tabular-nums ${transacao.valorCents >= 0 ? 'text-sucesso' : 'text-perigo'}`}>{transacao.valorCents >= 0 ? '+' : '−'} {formatarMoeda(Math.abs(transacao.valorCents))}</span>
                       </div>
                     ))}

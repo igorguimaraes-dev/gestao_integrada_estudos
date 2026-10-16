@@ -337,7 +337,7 @@ export const ClientesView: React.FC = () => {
                   type="text"
                   value={cnpjCpf}
                   onChange={(e) => setCnpjCpf(e.target.value)}
-                  placeholder="00.000.000/0001-00"
+                  placeholder="00.000.000/0000-00"
                   className="w-full rounded-[var(--radius-controle)] border border-borda-forte dark:border-borda-dark bg-superficie dark:bg-navy px-3 py-2 text-texto-medio dark:text-texto-medio-dark"
                 />
               </div>
@@ -350,7 +350,7 @@ export const ClientesView: React.FC = () => {
                   type="email"
                   value={emailFinanceiro}
                   onChange={(e) => setEmailFinanceiro(e.target.value)}
-                  placeholder="financeiro@cliente.com"
+                  placeholder="financeiro@example.com"
                   className="w-full rounded-[var(--radius-controle)] border border-borda-forte dark:border-borda-dark bg-superficie dark:bg-navy px-3 py-2 text-texto-medio dark:text-texto-medio-dark"
                 />
               </div>
@@ -363,7 +363,7 @@ export const ClientesView: React.FC = () => {
                   type="text"
                   value={telefone}
                   onChange={(e) => setTelefone(e.target.value)}
-                  placeholder="(11) 99999-9999"
+                  placeholder="(00) 00000-0000"
                   className="w-full rounded-[var(--radius-controle)] border border-borda-forte dark:border-borda-dark bg-superficie dark:bg-navy px-3 py-2 text-texto-medio dark:text-texto-medio-dark"
                 />
               </div>

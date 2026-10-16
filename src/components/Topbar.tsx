@@ -30,8 +30,6 @@ interface TopbarProps {
   onOpenQuickCreate: (type?: string) => void;
   hideValues: boolean;
   onToggleHideValues: () => void;
-  onManualSync: () => void;
-  isManualSyncing?: boolean;
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
@@ -44,8 +42,6 @@ export const Topbar: React.FC<TopbarProps> = ({
   onOpenQuickCreate,
   hideValues,
   onToggleHideValues,
-  onManualSync,
-  isManualSyncing = false,
 }) => {
   const [showPeriodDropdown, setShowPeriodDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -307,17 +303,9 @@ export const Topbar: React.FC<TopbarProps> = ({
           )}
         </div>
 
-        {/* Sync Status Badge */}
-        <button
-          id="btn-sync-status"
-          onClick={onManualSync}
-          disabled={isManualSyncing}
-          className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-sucesso dark:text-texto-forte-dark bg-sucesso-suave dark:bg-superficie-dark/40 border border-sucesso dark:border-borda-dark rounded-[var(--radius-controle)] hover:bg-sucesso-suave/70 dark:hover:bg-sucesso-suave/40 transition-colors disabled:cursor-wait disabled:opacity-70"
-          title="Forçar sincronização com o Asaas"
-        >
-          <RotateCw className={`w-3.5 h-3.5 text-sucesso dark:text-texto-forte-dark ${isManualSyncing ? 'animate-spin' : ''}`} />
-          <span className="hidden sm:inline">{isManualSyncing ? 'Sincronizando...' : 'Sincronizar Asaas'}</span>
-        </button>
+        <span className="rounded-lg border border-primaria px-3 py-1 text-xs text-primaria" title="Todos os dados sao ficticios; nenhuma cobranca e enviada.">
+          Ambiente demonstrativo
+        </span>
 
         {/* Hide/Show Financial Values */}
         <button
@@ -361,7 +349,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                   {!notificationsRead && <div className="w-2 h-2 rounded-full bg-perigo-suave0 mt-1 shrink-0" />}
                   <div>
                     <div className="font-semibold text-perigo dark:text-texto-forte-dark">Cobrança vencida (R$ 2.450)</div>
-                    <div className="text-perigo dark:text-texto-forte-dark text-[11px]">Aurora Marketing - Boleto Asaas vencido há 3 dias.</div>
+                    <div className="text-perigo dark:text-texto-forte-dark text-[11px]">Aurora Marketing - Boleto Demonstração vencido há 3 dias.</div>
                   </div>
                 </div>
                 <div className="p-2.5 rounded-[var(--radius-controle)] bg-primaria-suave dark:bg-navy-claro/30 border border-primaria dark:border-borda-dark/50 flex gap-2.5">
@@ -374,7 +362,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                 <div className="p-2.5 rounded-[var(--radius-controle)] bg-sucesso-suave dark:bg-superficie-dark/30 border border-sucesso dark:border-borda-dark/50 flex gap-2.5">
                   {!notificationsRead && <div className="w-2 h-2 rounded-full bg-sucesso-suave0 mt-1 shrink-0" />}
                   <div>
-                    <div className="font-semibold text-sucesso dark:text-texto-forte-dark">Pix confirmado no Asaas</div>
+                    <div className="font-semibold text-sucesso dark:text-texto-forte-dark">Pix confirmado no Demonstração</div>
                     <div className="text-sucesso dark:text-texto-forte-dark text-[11px]">Nexus Corp pagou NF-e 2026-0091 (R$ 18.000).</div>
                   </div>
                 </div>
@@ -430,7 +418,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                 className="w-full flex items-center gap-2.5 px-3 py-2 text-texto dark:text-texto-medio-dark hover:bg-primaria-suave dark:hover:bg-primaria-suave/40 hover:text-primaria dark:hover:text-primaria transition-colors text-left"
               >
                 <Receipt className="w-4 h-4 text-texto-suave dark:text-texto-suave-dark" />
-                <span>Nova cobrança (Asaas)</span>
+                <span>Nova cobrança (Demonstração)</span>
               </button>
               <button
                 onClick={() => {

@@ -101,12 +101,12 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
       description: chargeDescription,
       createdAt: new Date().toLocaleDateString('pt-BR'),
       pixCopiaECola: chargeMethod === 'Pix' ? `DEMO-PIX-${Date.now()}` : undefined,
-      bankSlipCode: chargeMethod === 'Boleto' ? `03399.${Math.floor(Math.random()*90000+10000)} ${Math.floor(Math.random()*90000+10000)}.678901 2 98450000${Math.floor(val)}00` : undefined,
+      bankSlipCode: chargeMethod === 'Boleto' ? 'DEMO-BOLETO-SEM-VALOR' : undefined,
     };
 
     if (onAddCharge) onAddCharge(newCharge);
     setShowNewChargeModal(false);
-    onTriggerToast('Cobrança Asaas gerada com sucesso!', `${chargeMethod} de ${formatCurrency(val, hideValues)} emitido para ${chargeClientName}.`);
+    onTriggerToast('Cobranca ficticia criada!', `${chargeMethod} de ${formatCurrency(val, hideValues)} emitido para ${chargeClientName}.`);
   };
 
   const handleCreateInvoice = (e: React.FormEvent) => {
@@ -119,7 +119,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
       rpsNumber: `RPS ${Math.floor(Math.random() * 900 + 1400)}`,
       clientId: clientObj?.id || 'cli-custom',
       clientName: invoiceClientName,
-      clientDocument: clientObj?.document || '00.000.000/0001-00',
+      clientDocument: clientObj?.document || '00.000.000/0000-00',
       amount: val,
       issueDate: 'Hoje às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
       competence: '09/2026',
@@ -141,7 +141,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
 
     if (onAddInvoice) onAddInvoice(newInvoice);
     setShowNewInvoiceModal(false);
-    onTriggerToast('NFS-e Emitida com Sucesso!', `Nota fiscal Nº ${newInvoice.number} autorizada pela prefeitura via Asaas.`);
+    onTriggerToast('NFS-e Emitida com Sucesso!', `Nota fiscal Nº ${newInvoice.number} simulada localmente, sem transmissao fiscal.`);
   };
 
   // Metrics for overview cards
@@ -175,13 +175,13 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
               Emissão de Notas & Cobranças
             </h1>
             <span className="dark:bg-fundo-dark dark:text-texto-forte-dark inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[#EBF0FF] text-[#0030B9] border border-[#C5D5FA]">
-              <IntegrationLogo logo="asaas" size="sm" className="dark:bg-fundo-dark dark:text-texto-forte-dark w-4 h-4 rounded-xs" />
-              <span>Gateway Asaas Ativo</span>
+              <span aria-hidden="true">DEMO</span>
+              <span>Simulacao local</span>
               <span className="dark:bg-fundo-dark dark:text-texto-forte-dark w-1.5 h-1.5 rounded-full bg-[#0030B9] animate-pulse"></span>
             </span>
           </div>
           <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-texto-medio mt-1">
-            Plataforma integrada de emissão de NFS-e direto na prefeitura e geração de cobranças Pix e Boleto via Asaas.
+            Demonstracao de notas fiscais e cobrancas. Todos os registros sao ficticios, sem emissao ou envio.
           </p>
         </div>
 
@@ -192,7 +192,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
             className="dark:bg-fundo-dark dark:text-texto-forte-dark flex items-center gap-2 px-4 py-2 rounded-[var(--radius-controle)] bg-[var(--color-primaria)] hover:bg-primaria-suave text-white text-xs font-semibold shadow-sutil transition-colors"
           >
             <Plus className="dark:bg-fundo-dark dark:text-texto-forte-dark w-4 h-4" />
-            <span>Emitir Cobrança Asaas</span>
+            <span>Simular cobranca</span>
           </button>
 
           <button
@@ -214,10 +214,10 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
           </div>
           <div>
             <span className="dark:bg-fundo-dark dark:text-texto-forte-dark font-semibold text-texto-medio block">
-              Módulo exclusivo para usuários da plataforma Asaas
+              Demonstracao para entrevista
             </span>
             <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-texto-medio mt-0.5">
-              Esta funcionalidade utiliza a API do Asaas como motor unificado para emitir cobranças com conciliação automática e disparar as Notas Fiscais de Serviço (NFS-e) na prefeitura assim que liquidadas.
+              Os dados desta tela sao exemplos locais. Nenhuma API de pagamento, prefeitura ou webhook e acionado.
             </p>
           </div>
         </div>
@@ -291,7 +291,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
               : 'text-texto-medio hover:text-texto-medio'
           }`}
         >
-          Configurações Asaas
+          Demonstracao
           {activeTab === 'configuracoes' && (
             <span className="dark:bg-fundo-dark dark:text-texto-forte-dark absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--color-primaria)] rounded-t-full"></span>
           )}
@@ -318,7 +318,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
                   Nota Fiscal de Serviço
                 </h2>
                 <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-sm text-texto-medio text-center max-w-sm mx-auto mb-8 font-normal leading-relaxed">
-                  Emita NFS-e direto do sistema, sem portal da prefeitura.
+                  Explore exemplos de NFS-e, sem transmissão fiscal.
                 </p>
 
                 {/* Inner White Container */}
@@ -352,7 +352,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
                   <div className="dark:bg-fundo-dark dark:text-texto-forte-dark space-y-3 pt-2">
                     <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex items-center gap-3 text-xs font-medium text-texto-medio">
                       <span className="dark:bg-fundo-dark dark:text-texto-forte-dark w-2 h-2 rounded-full bg-[#0080FF] shrink-0"></span>
-                      <span>Integrada à prefeitura</span>
+                      <span>Simulação local</span>
                     </div>
 
                     <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex items-center gap-3 text-xs font-medium text-texto-medio">
@@ -546,7 +546,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
           <div className="dark:bg-fundo-dark dark:text-texto-forte-dark bg-superficie rounded-2xl border border-borda p-6 shadow-sutil">
             <h3 className="dark:bg-fundo-dark dark:text-texto-forte-dark text-sm font-bold text-texto-medio mb-4 flex items-center gap-2">
               <ShieldCheck className="dark:bg-fundo-dark dark:text-texto-forte-dark w-4 h-4 text-sucesso" />
-              <span>Como funciona o fluxo integrado Asaas no sistema</span>
+              <span>Como funciona a simulacao de cobrancas</span>
             </h3>
 
             <div className="dark:bg-fundo-dark dark:text-texto-forte-dark grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
@@ -556,7 +556,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
                 </div>
                 <div className="dark:bg-fundo-dark dark:text-texto-forte-dark font-semibold text-texto-medio">Geração de Cobrança</div>
                 <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-texto-medio leading-relaxed">
-                  O sistema gera o Pix dinâmico ou Boleto bancário com QR Code via API do Asaas e envia para o cliente por e-mail e WhatsApp.
+                  O sistema cria um exemplo local de cobranca, com codigo demonstrativo sem valor de pagamento.
                 </p>
               </div>
 
@@ -566,7 +566,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
                 </div>
                 <div className="dark:bg-fundo-dark dark:text-texto-forte-dark font-semibold text-texto-medio">Baixa Automática (Webhook)</div>
                 <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-texto-medio leading-relaxed">
-                  Assim que o cliente efetua o pagamento, o Asaas notifica o sistema via Webhook e a conta é baixada em tempo real sem conciliação manual.
+                  A demonstracao permite visualizar estados ficticios de pagamento e conciliacao, sem notificacoes externas.
                 </p>
               </div>
 
@@ -576,7 +576,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
                 </div>
                 <div className="dark:bg-fundo-dark dark:text-texto-forte-dark font-semibold text-texto-medio">Emissão e Envio da NFS-e</div>
                 <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-texto-medio leading-relaxed">
-                  A NFS-e é gerada automaticamente na prefeitura correspondente e o link do XML e PDF é enviado imediatamente para o financeiro do cliente.
+                  A nota fiscal e um exemplo local. Nenhum XML, PDF ou mensagem e enviado a prefeitura ou ao cliente.
                 </p>
               </div>
             </div>
@@ -592,7 +592,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
               <Search className="dark:bg-fundo-dark dark:text-texto-forte-dark w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-texto-medio" />
               <input
                 type="text"
-                placeholder="Buscar por cliente, descrição ou ID Asaas..."
+                placeholder="Buscar por cliente, descrição ou ID demonstrativo..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="dark:bg-fundo-dark dark:text-texto-forte-dark w-full pl-9 pr-4 py-2 border border-borda rounded-[var(--radius-controle)] text-xs focus:outline-hidden focus:ring-2 focus:ring-primaria bg-superficie"
@@ -626,7 +626,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
               <table className="dark:bg-fundo-dark dark:text-texto-forte-dark w-full text-left text-xs">
                 <thead>
                   <tr className="dark:bg-fundo-dark dark:text-texto-forte-dark bg-fundo-sutil/75 border-b border-borda text-texto-medio font-semibold uppercase tracking-wider text-[11px]">
-                    <th className="dark:bg-fundo-dark dark:text-texto-forte-dark py-3 px-4">Cliente & ID Asaas</th>
+                    <th className="dark:bg-fundo-dark dark:text-texto-forte-dark py-3 px-4">Cliente & ID demonstrativo</th>
                     <th className="dark:bg-fundo-dark dark:text-texto-forte-dark py-3 px-4">Forma</th>
                     <th className="dark:bg-fundo-dark dark:text-texto-forte-dark py-3 px-4">Valor</th>
                     <th className="dark:bg-fundo-dark dark:text-texto-forte-dark py-3 px-4">Vencimento</th>
@@ -821,20 +821,20 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
         <div className="dark:bg-fundo-dark dark:text-texto-forte-dark max-w-3xl space-y-6">
           <div className="dark:bg-fundo-dark dark:text-texto-forte-dark bg-superficie border border-borda rounded-2xl p-6 shadow-sutil space-y-6">
             <h3 className="dark:bg-fundo-dark dark:text-texto-forte-dark text-base font-bold text-texto-medio">
-              Configurações da Integração Asaas
+              Configuracoes da demonstracao
             </h3>
             <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-texto-medio -mt-4">
-              Defina como o gateway do Asaas deve se comportar para emissão automática de cobranças e notas fiscais.
+              As cobrancas e notas sao ficticias e ficam apenas nesta sessao.
             </p>
 
             <div className="dark:bg-fundo-dark dark:text-texto-forte-dark space-y-4">
               <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex items-center justify-between p-4 rounded-[var(--radius-card)] bg-fundo-sutil border border-borda">
                 <div>
                   <div className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs font-semibold text-texto-medio">
-                    Utilizar Asaas como plataforma exclusiva de cobrança
+                    Simulacao local de cobrancas
                   </div>
                   <div className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[11px] text-texto-medio">
-                    Garante que todas as novas cobranças sejam geradas com Pix e Boleto registrados no Asaas.
+                    Exemplos sem registro bancario ou envio a clientes.
                   </div>
                 </div>
                 <input
@@ -851,7 +851,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
                     Emissão automática de NFS-e na liquidação
                   </div>
                   <div className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[11px] text-texto-medio">
-                    Assim que a cobrança do cliente for paga (Pix ou Boleto), a prefeitura recebe o RPS para autorizar a nota.
+                    Preferência demonstrativa para ilustrar o fluxo após um pagamento fictício. Nenhum RPS é enviado.
                   </div>
                 </div>
                 <input
@@ -863,7 +863,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
               </div>
 
               <div className="dark:bg-fundo-dark dark:text-texto-forte-dark space-y-1.5">
-                <label className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs font-semibold text-texto-medio">Ambiente Asaas</label>
+                <label className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs font-semibold text-texto-medio">Ambiente local</label>
                 <div className="dark:bg-fundo-dark dark:text-texto-forte-dark grid grid-cols-2 gap-3">
                   <button
                     type="button"
@@ -895,12 +895,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
 
               <div className="dark:bg-fundo-dark dark:text-texto-forte-dark space-y-1.5">
                 <label className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs font-semibold text-texto-medio">Dados de demonstração</label>
-                <input
-                  type="password"
-                  value="Nenhuma chave é utilizada"
-                  readOnly
-                  className="dark:bg-fundo-dark dark:text-texto-forte-dark w-full px-3.5 py-2.5 rounded-[var(--radius-card)] border border-borda text-xs font-mono bg-superficie focus:outline-hidden focus:ring-2 focus:ring-primaria"
-                />
+                <p className="text-xs text-texto-medio">Nenhuma chave ou conexao externa.</p>
               </div>
 
               <div className="dark:bg-fundo-dark dark:text-texto-forte-dark p-4 bg-sucesso-suave border border-sucesso rounded-[var(--radius-card)] text-xs space-y-1">
@@ -916,7 +911,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
 
             <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex justify-end pt-4 border-t border-borda">
               <button
-                onClick={() => onTriggerToast('Configurações salvas', 'Parâmetros da integração Asaas atualizados com sucesso.')}
+                onClick={() => onTriggerToast('Configurações salvas', 'Preferencias demonstrativas atualizadas.')}
                 className="dark:bg-fundo-dark dark:text-texto-forte-dark px-5 py-2.5 rounded-[var(--radius-card)] bg-[var(--color-primaria)] hover:bg-primaria-suave text-white text-xs font-semibold shadow-sutil"
               >
                 Salvar Preferências
@@ -936,8 +931,8 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
                   <DollarSign className="dark:bg-fundo-dark dark:text-texto-forte-dark w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="dark:bg-fundo-dark dark:text-texto-forte-dark text-base font-bold text-texto-medio">Emitir Cobrança Asaas</h3>
-                  <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-texto-medio">Gere cobrança Pix e Boleto registrada no Asaas</p>
+                  <h3 className="dark:bg-fundo-dark dark:text-texto-forte-dark text-base font-bold text-texto-medio">Simular cobranca</h3>
+                  <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-texto-medio">Crie um exemplo local de Pix ou boleto sem valor de pagamento</p>
                 </div>
               </div>
               <button onClick={() => setShowNewChargeModal(false)} className="dark:bg-fundo-dark dark:text-texto-forte-dark text-texto-medio hover:text-texto-medio">
@@ -958,10 +953,10 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
                       {c.name} ({c.document})
                     </option>
                   ))}
-                  <option value="Beta ME">Beta ME (12.345.678/0001-90)</option>
-                  <option value="Gamma SA">Gamma SA (18.491.029/0001-55)</option>
-                  <option value="Delta EIRELI">Delta EIRELI (31.849.201/0001-83)</option>
-                  <option value="Epsilon ME">Epsilon ME (50.192.834/0001-90)</option>
+                  <option value="Beta ME">Beta ME (00.000.000/0000-00)</option>
+                  <option value="Gamma SA">Gamma SA (00.000.000/0000-00)</option>
+                  <option value="Delta EIRELI">Delta EIRELI (00.000.000/0000-00)</option>
+                  <option value="Epsilon ME">Epsilon ME (00.000.000/0000-00)</option>
                 </select>
               </div>
 
@@ -1058,7 +1053,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
                   type="submit"
                   className="dark:bg-fundo-dark dark:text-texto-forte-dark px-5 py-2 bg-[var(--color-primaria)] hover:bg-primaria-suave text-white rounded-[var(--radius-card)] font-semibold shadow-sutil transition-colors"
                 >
-                  Gerar Cobrança Asaas
+                  Criar exemplo de cobranca
                 </button>
               </div>
             </form>
@@ -1077,7 +1072,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
                 </div>
                 <div>
                   <h3 className="dark:bg-fundo-dark dark:text-texto-forte-dark text-base font-bold text-texto-medio">Emitir NFS-e de Serviço</h3>
-                  <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-texto-medio">Transmissão eletrônica para prefeitura via Asaas</p>
+                  <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-texto-medio">Simulacao de nota fiscal, sem transmissao para prefeitura</p>
                 </div>
               </div>
               <button onClick={() => setShowNewInvoiceModal(false)} className="dark:bg-fundo-dark dark:text-texto-forte-dark text-texto-medio hover:text-texto-medio">
@@ -1098,10 +1093,10 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
                       {c.name} ({c.document})
                     </option>
                   ))}
-                  <option value="Alpha Ltda">Alpha Ltda (42.610.778/0001-31)</option>
-                  <option value="Gamma SA">Gamma SA (18.491.029/0001-55)</option>
-                  <option value="Delta EIRELI">Delta EIRELI (31.849.201/0001-83)</option>
-                  <option value="Epsilon ME">Epsilon ME (50.192.834/0001-90)</option>
+                  <option value="Alpha Ltda">Alpha Ltda (00.000.000/0000-00)</option>
+                  <option value="Gamma SA">Gamma SA (00.000.000/0000-00)</option>
+                  <option value="Delta EIRELI">Delta EIRELI (00.000.000/0000-00)</option>
+                  <option value="Epsilon ME">Epsilon ME (00.000.000/0000-00)</option>
                 </select>
               </div>
 
@@ -1209,7 +1204,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
             </div>
 
             <div className="dark:bg-fundo-dark dark:text-texto-forte-dark text-center py-2">
-              <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-texto-medio font-medium">Valor da Cobrança Asaas</span>
+              <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-texto-medio font-medium">Valor da cobranca ficticia</span>
               <div className="dark:bg-fundo-dark dark:text-texto-forte-dark text-3xl font-bold text-texto-medio mt-1">
                 {formatCurrency(selectedChargeForDetails.amount, hideValues)}
               </div>
@@ -1259,7 +1254,7 @@ export const AsaasNotasECobrancasView: React.FC<AsaasNotasECobrancasViewProps> =
             )}
 
             <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex justify-between items-center text-xs text-texto-medio pt-2">
-              <span>Asaas ID: {selectedChargeForDetails.asaasId}</span>
+              <span>ID demonstrativo: {selectedChargeForDetails.asaasId}</span>
               <button
                 onClick={() => {
                   onTriggerToast('Link enviado', `Cobrança enviada via WhatsApp para ${selectedChargeForDetails.clientName}`);

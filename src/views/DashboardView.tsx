@@ -84,8 +84,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   useEffect(() => subscribeToStorage(() => setAsaasDataRevision((value) => value + 1)), []);
 
-  const asaasContas = StorageService.getContas().filter((conta) => conta.id === 'asaas-saldo-producao');
-  const asaasLancamentos = StorageService.getLancamentos().filter((lancamento) => lancamento.tags?.includes('asaas'));
+  const asaasContas = StorageService.getContas();
+  const asaasLancamentos = StorageService.getLancamentos().filter((lancamento) => lancamento.tipo === 'receita');
   const mesAtual = new Date().toISOString().slice(0, 7);
   const saldoAsaas = asaasContas.reduce((total, conta) => total + conta.saldoInicial, 0) / 100;
   const aReceberAsaas = asaasLancamentos
@@ -219,7 +219,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </div>
                   <div className="flex items-center gap-1 text-xs font-medium text-sucesso dark:text-texto-forte-dark mt-1">
                     <TrendingUp className="w-3.5 h-3.5" />
-                    <span>{possuiDadosAsaas ? 'Saldo disponível no Asaas' : 'Aguardando sincronização Asaas'}</span>
+                    <span>{possuiDadosAsaas ? 'Saldo disponível no Demonstração' : 'Aguardando sincronização Demonstração'}</span>
                   </div>
                 </div>
                 <div>{renderSparkline([160, 168, 172, 170, 179, 184], '#7C3AED')}</div>
@@ -241,7 +241,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </div>
                   <div className="flex items-center gap-1 text-xs font-medium text-sucesso dark:text-texto-forte-dark mt-1">
                     <TrendingUp className="w-3.5 h-3.5" />
-                    <span>{possuiDadosAsaas ? 'Cobranças pendentes no mês' : 'Aguardando sincronização Asaas'}</span>
+                    <span>{possuiDadosAsaas ? 'Cobranças pendentes no mês' : 'Aguardando sincronização Demonstração'}</span>
                   </div>
                 </div>
                 <div>{renderSparkline([210, 220, 235, 240, 255, 268], '#7C3AED')}</div>
@@ -263,7 +263,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </div>
                   <div className="flex items-center gap-1 text-xs font-medium text-sucesso dark:text-texto-forte-dark mt-1">
                     <TrendingUp className="w-3.5 h-3.5" />
-                    <span>{possuiDadosAsaas ? 'Cobranças recebidas no mês' : 'Aguardando sincronização Asaas'}</span>
+                    <span>{possuiDadosAsaas ? 'Cobranças recebidas no mês' : 'Aguardando sincronização Demonstração'}</span>
                   </div>
                 </div>
                 <div>{renderSparkline([150, 165, 178, 172, 190, 197], '#7C3AED')}</div>
@@ -718,7 +718,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-texto-medio dark:text-white tracking-tight">
-            Boa tarde, Marlon
+            Boa tarde, Rafael
           </h1>
           <p className="text-xs text-texto-medio dark:text-texto-medio-dark mt-1">
             Setembro de 2026 · comparado a agosto de 2026

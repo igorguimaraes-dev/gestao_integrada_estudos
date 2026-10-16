@@ -124,7 +124,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {!isClosed && (
           <div className="min-w-0 flex-1">
             <span className="font-bold text-base tracking-tight text-texto-forte dark:text-texto-forte-dark block truncate">
-              Asaas Conta PJ
+              Demonstração Conta PJ
             </span>
             <span className="text-[11px] text-sucesso dark:text-texto-forte-dark font-medium flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-sucesso-suave0 animate-pulse"></span>
@@ -466,8 +466,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
           {!isClosed && (
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-texto-forte dark:text-texto-forte-dark truncate">Marlon Ribeiro</p>
-              <p className="text-[10px] text-texto-medio dark:text-texto-suave-dark truncate">Dubbo Marketing · Pro</p>
+              <p className="text-xs font-semibold text-texto-forte dark:text-texto-forte-dark truncate">Rafael Demo</p>
+              <p className="text-[10px] text-texto-medio dark:text-texto-suave-dark truncate">Nexus Demo · Pro</p>
             </div>
           )}
         </div>

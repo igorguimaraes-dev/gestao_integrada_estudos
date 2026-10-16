@@ -26,7 +26,7 @@ describe('App', () => {
       </ThemeProvider>,
     );
 
-    await user.type(screen.getByLabelText('E-mail'), 'admin@empresa.com');
+    await user.type(screen.getByLabelText('E-mail'), 'admin@example.com');
     await user.type(screen.getByLabelText('Senha'), 'senha-segura');
     await user.click(screen.getByRole('button', { name: 'Entrar no sistema' }));
     await user.click(screen.getByRole('button', { name: 'Expandir seção Financeiro' }));

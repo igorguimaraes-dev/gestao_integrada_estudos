@@ -1,6 +1,5 @@
 import { Braces } from 'lucide-react';
 import type { FormEvent } from 'react';
-import { IntegrationLogo } from './IntegrationLogo';
 import './login.css';
 
 interface LoginProps {
@@ -20,9 +19,9 @@ export function Login({ onLogin }: LoginProps) {
           <strong>Gestão Integrada</strong>
           <span>Clientes, contratos e cobranças</span>
         </div>
-        <span className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark login-eyebrow">ACESSO RESTRITO</span>
+        <span className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark login-eyebrow">AMBIENTE DEMONSTRATIVO</span>
         <h1>Bem-vindo de volta</h1>
-        <p>Entre para acessar as integrações com Asaas e Autentique.</p>
+        <p>Explore a apresentação com dados inteiramente fictícios.</p>
         <form onSubmit={handleSubmit}>
           <label>
             E-mail
@@ -34,12 +33,17 @@ export function Login({ onLogin }: LoginProps) {
           </label>
           <button className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark login-primary" type="submit">Entrar no sistema</button>
         </form>
-        <small>Ambiente protegido · Integrações no backend</small>
+        <small>Dados fictícios · Sem conexão com contas reais</small>
         <div className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark login-integration-showcase">
-          <span>INTEGRAÇÕES</span>
+          <span>APRESENTAÇÃO</span>
           <div className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark login-integration-grid">
-            <IntegrationLogo logo="asaas" name="Asaas" size="xl" className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark login-integration-logo login-asaas" />
-            <IntegrationLogo logo="autentique" name="Autentique" size="xl" className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark login-integration-logo login-autentique" />
+            <div className="login-integration-logo login-asaas">
+              <img src="/logos/asaas.svg" alt="Asaas" width="100" height="24" />
+            </div>
+            <div className="login-integration-logo login-autentique">
+              <img src="/logos/autentique.svg" alt="Autentique" width="30" height="30" />
+              <span aria-hidden="true">Autentique</span>
+            </div>
             <div className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark login-integration-logo login-api">
               <Braces size={21} aria-hidden="true" />
               <span><strong>API</strong><small>Integramos outros sistemas</small></span>

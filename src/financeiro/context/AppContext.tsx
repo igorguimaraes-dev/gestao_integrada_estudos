@@ -810,7 +810,7 @@ export const AppProvider: React.FC<{ children: ReactNode; initialTab?: string }>
 
   const carregarDadosFicticios = () => {
     StorageService.carregarDadosFicticios();
-    showToast('Dados financeiros removidos. Aguarde a sincronização do Asaas.', 'info');
+    showToast('Dados ficticios da apresentacao carregados.', 'info');
   };
 
   const resetAll = () => {

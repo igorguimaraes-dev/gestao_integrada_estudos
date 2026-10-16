@@ -90,7 +90,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
       },
     },
     {
-      label: 'Nova cobrança no Asaas',
+      label: 'Nova cobrança no Demonstração',
       icon: DollarSign,
       action: () => {
         onClose();
@@ -98,7 +98,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
       },
     },
     {
-      label: 'Notas Fiscais & Cobranças Asaas',
+      label: 'Notas Fiscais & Cobranças Demonstração',
       icon: Receipt,
       action: () => {
         onClose();

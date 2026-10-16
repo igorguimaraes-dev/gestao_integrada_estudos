@@ -77,7 +77,7 @@ const additionalCalendarEvents: ActionItem[] = [
     priority: 'media',
     category: 'financeiro',
     title: 'Vencimento Cobrança Clínica Vitta (R$ 3.800)',
-    description: 'Mensalidade via Pix Asaas com emissão automática de NFS-e.',
+    description: 'Mensalidade via Pix Demonstração com emissão automática de NFS-e.',
     value: 3800,
     dueDate: '05/09/2026',
     clientId: 'cli-vitta',
@@ -93,7 +93,7 @@ const additionalCalendarEvents: ActionItem[] = [
     title: 'Reunião de Alinhamento de Metas Q3/Q4',
     description: 'Alinhamento estratégico com o comitê de novos negócios e expansão de contas.',
     dueDate: '07/09/2026',
-    responsible: 'Marlon Ribeiro',
+    responsible: 'Rafael Demo',
     actionType: 'reuniao',
   },
   {
@@ -101,12 +101,12 @@ const additionalCalendarEvents: ActionItem[] = [
     priority: 'media',
     category: 'financeiro',
     title: 'Vencimento Parcela Costa Consultoria (R$ 4.500)',
-    description: 'Boleto Asaas referente à parcela inicial de expansão de contrato.',
+    description: 'Boleto Demonstração referente à parcela inicial de expansão de contrato.',
     value: 4500,
     dueDate: '10/09/2026',
     clientId: 'cli-costa',
     clientName: 'Costa Consultoria',
-    responsible: 'Marlon Ribeiro',
+    responsible: 'Rafael Demo',
     actionType: 'lembrete_cobranca',
   },
   {
@@ -114,7 +114,7 @@ const additionalCalendarEvents: ActionItem[] = [
     priority: 'media',
     category: 'financeiro',
     title: 'Fechamento Quinzena & Emissão Lote NFS-e',
-    description: 'Auditar conciliação bancária do Asaas e fechar conciliações tributárias.',
+    description: 'Auditar conciliação bancária do Demonstração e fechar conciliações tributárias.',
     dueDate: '15/09/2026',
     responsible: 'Helena Duarte',
     actionType: 'sincronizacao',
@@ -129,7 +129,7 @@ const additionalCalendarEvents: ActionItem[] = [
     dueDate: '15/09/2026',
     clientId: 'cli-horizonte',
     clientName: 'Studio Horizonte',
-    responsible: 'Marlon Ribeiro',
+    responsible: 'Rafael Demo',
     actionType: 'lembrete_cobranca',
   },
   {
@@ -141,7 +141,7 @@ const additionalCalendarEvents: ActionItem[] = [
     value: 14500,
     dueDate: '16/09/2026',
     clientName: 'BioNutri Alimentos',
-    responsible: 'Marlon Ribeiro',
+    responsible: 'Rafael Demo',
     actionType: 'retorno_proposta',
   },
   {
@@ -160,12 +160,12 @@ const additionalCalendarEvents: ActionItem[] = [
     priority: 'media',
     category: 'financeiro',
     title: 'Vencimento Alpha Tecnologia (R$ 8.500)',
-    description: 'Cobrança via cartão corporativo recorrente Asaas.',
+    description: 'Cobrança via cartão corporativo recorrente Demonstração.',
     value: 8500,
     dueDate: '20/09/2026',
     clientId: 'cli-alpha',
     clientName: 'Alpha Tecnologia',
-    responsible: 'Marlon Ribeiro',
+    responsible: 'Rafael Demo',
     actionType: 'lembrete_cobranca',
   },
   {
@@ -178,7 +178,7 @@ const additionalCalendarEvents: ActionItem[] = [
     dueDate: '30/09/2026',
     clientId: 'cli-exclusive',
     clientName: 'Exclusive Motors',
-    responsible: 'Marlon Ribeiro',
+    responsible: 'Rafael Demo',
     actionType: 'renovacao',
   },
 ];
@@ -230,7 +230,7 @@ export const CentralDoDiaView: React.FC<CentralDoDiaViewProps> = ({
   const [newEventDate, setNewEventDate] = useState('2026-09-07');
   const [newEventClientId, setNewEventClientId] = useState('');
   const [newEventValue, setNewEventValue] = useState('');
-  const [newEventResponsible, setNewEventResponsible] = useState('Marlon Ribeiro');
+  const [newEventResponsible, setNewEventResponsible] = useState('Rafael Demo');
   const [newEventDesc, setNewEventDesc] = useState('');
 
   // Categories definition
@@ -1379,7 +1379,7 @@ export const CentralDoDiaView: React.FC<CentralDoDiaViewProps> = ({
                     <option value="financeiro">Financeiro (Cobrança/NFS-e)</option>
                     <option value="contratos">Contratos (Assinatura/Renovação)</option>
                     <option value="comercial">Comercial (Proposta/Reunião)</option>
-                    <option value="integracoes">Integrações (Asaas)</option>
+                    <option value="integracoes">Integrações (Demonstração)</option>
                   </select>
                 </div>
 

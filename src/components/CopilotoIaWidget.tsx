@@ -166,11 +166,11 @@ export const CopilotoIaWidget: React.FC<CopilotoIaWidgetProps> = ({
       if (q.includes('inadimpl') || q.includes('atras')) {
         fallbackText = `### Análise de Inadimplência & Cobrança
 - **Alpha Tech Solutions:** **R$ 14.500,00** em atraso há 12 dias (Contrato CTR-2026-001).
-- **Status:** Falha de compensação no Asaas (7,8% do MRR total da carteira).
-- **Recomendação:** Reenviar Pix Copia e Cola pelo Asaas e verificar contato financeiro.`;
+- **Status:** Falha de compensação no Demonstração (7,8% do MRR total da carteira).
+- **Recomendação:** Reenviar Pix Copia e Cola pelo Demonstração e verificar contato financeiro.`;
       } else if (q.includes('saldo') || q.includes('quanto tem') || q.includes('caixa')) {
         fallbackText = `Saldo bancário consolidado: **R$ 218.886,41**
-- **Asaas (Conta Digital):** R$ 142.320,00
+- **Demonstração (Conta Digital):** R$ 142.320,00
 - **Santander PJ:** R$ 85.000,00
 - **Itaú PJ:** -R$ 8.433,59 *(5 pendências somando R$ 60.254,21)*`;
       } else if (q.includes('concilia')) {

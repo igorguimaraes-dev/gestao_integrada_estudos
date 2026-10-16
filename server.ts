@@ -3,8 +3,6 @@ import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
-import { database } from './server/database';
-import { criarSnapshotDemonstracao, statusIntegracaoDemonstracao } from './server/asaasDemo';
 
 dotenv.config({ path: path.join(process.cwd(), '.env.local') });
 
@@ -14,75 +12,18 @@ async function startServer() {
 
   app.use(express.json({ limit: '10mb' }));
 
-  const workspaceFromRequest = (req: express.Request) => req.header('x-workspace-id') || 'default';
-
-  app.get('/api/persistence/state', async (req, res) => {
-    if (!database.enabled) return res.status(503).json({ error: 'Banco de dados não configurado.' });
-    try {
-      const state = await database.getState(workspaceFromRequest(req));
-      return res.json({ state });
-    } catch (error) {
-      return res.status(503).json({ error: error instanceof Error ? error.message : 'Banco indisponível.' });
-    }
-  });
-
-  app.put('/api/persistence/state', async (req, res) => {
-    if (!database.enabled) return res.status(503).json({ error: 'Banco de dados não configurado.' });
-    if (!req.body?.state || typeof req.body.state !== 'object' || Array.isArray(req.body.state)) {
-      return res.status(400).json({ error: 'Estado de persistência inválido.' });
-    }
-    try {
-      await database.saveState(workspaceFromRequest(req), req.body.state);
-      return res.status(204).end();
-    } catch (error) {
-      return res.status(503).json({ error: error instanceof Error ? error.message : 'Banco indisponível.' });
-    }
-  });
-
-  app.post('/api/persistence/semantic-documents', async (req, res) => {
-    try {
-      await database.upsertSemanticDocument(workspaceFromRequest(req), req.body || {});
-      return res.status(204).end();
-    } catch (error) {
-      return res.status(400).json({ error: error instanceof Error ? error.message : 'Documento semântico inválido.' });
-    }
-  });
-
-  app.post('/api/persistence/semantic-search', async (req, res) => {
-    try {
-      const results = await database.searchSemanticDocuments(workspaceFromRequest(req), req.body?.embedding || [], req.body?.limit);
-      return res.json({ results });
-    } catch (error) {
-      return res.status(400).json({ error: error instanceof Error ? error.message : 'Busca semântica inválida.' });
-    }
-  });
+  // Nesta edicao os dados financeiros ficam somente no navegador.
+  app.get('/api/persistence/state', (_req, res) => res.json({ state: null, mode: 'demonstration' }));
+  app.put('/api/persistence/state', (_req, res) => res.status(410).json({ error: 'Persistencia remota desativada na demonstracao.' }));
 
   // Health check endpoint
   app.get('/api/health', (req, res) => {
     res.json({
       status: 'ok',
       hasApiKey: !!process.env.GEMINI_API_KEY,
-      databaseConfigured: database.enabled,
+      databaseConfigured: false,
       timestamp: new Date().toISOString(),
     });
-  });
-
-  app.get('/api/integrations/asaas/status', (req, res) => {
-    res.json(statusIntegracaoDemonstracao());
-  });
-
-  app.post('/api/integrations/asaas/test-connection', (req, res) => {
-    res.json(statusIntegracaoDemonstracao());
-  });
-
-  app.post('/api/integrations/asaas/sync', async (req, res) => {
-    try {
-      return res.json(criarSnapshotDemonstracao());
-    } catch (error) {
-      return res.status(502).json({
-        error: error instanceof Error ? error.message : 'Não foi possível carregar os dados fictícios.',
-      });
-    }
   });
 
   // AI Assistant endpoint
@@ -107,7 +48,7 @@ DIRETRIZES FUNDAMENTAIS DE COMPORTAMENTO:
 6. Se perguntarem sobre inadimplência: informe quem está em atraso, valores e dias. Nada mais.
 7. Se perguntarem sobre despesas ou receitas: apresente os números solicitados de forma direta.
 
-DADOS REAIS CARREGADOS DO SISTEMA:
+DADOS FICTICIOS DA APRESENTACAO:
 ${JSON.stringify(contextData, null, 2)}
 `;
 
@@ -192,6 +133,9 @@ ${JSON.stringify(contextData, null, 2)}
     }
   });
 
+  // Rotas removidas nunca devem receber o HTML da SPA como resposta de API.
+  app.use('/api', (_req, res) => res.status(404).json({ error: 'Endpoint não disponível nesta demonstração.' }));
+
   // Vite development middleware or static production serving
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
@@ -226,7 +170,7 @@ function extractSuggestedActions(replyText: string, userQuery: string) {
 
   if (text.includes('asaas') || text.includes('nota') || text.includes('cobrança') || text.includes('boleto') || text.includes('nfse')) {
     actions.push({
-      label: 'Notas & Cobranças Asaas',
+      label: 'Notas & Cobranças Demonstração',
       route: 'notas-cobrancas',
       description: 'Gerenciar emissão de faturas, boletos e NFS-e',
     });
@@ -274,7 +218,7 @@ function generateSmartFallbackReply(query: string, context: any) {
   if (q.includes('saldo') || q.includes('quanto tem') || q.includes('caixa') || (q.includes('banco') && !q.includes('como concilia'))) {
     return {
       text: `Seu saldo bancário consolidado atual é de **R$ 218.886,41**, distribuído em:
-- **Asaas (Conta Digital)**: R$ 142.320,00
+- **Demonstração (Conta Digital)**: R$ 142.320,00
 - **Santander PJ (Reserva)**: R$ 85.000,00
 - **Itaú Unibanco PJ**: -R$ 8.433,59 *(com 5 lançamentos pendentes de conciliação totalizando R$ 60.254,21)*`,
       actions: [
@@ -292,16 +236,16 @@ function generateSmartFallbackReply(query: string, context: any) {
 - **Cliente em Atraso:** **Alpha Tech Solutions** (CNPJ: 12.345.678/0001-90)
 - **Valor Vencido:** **R$ 14.500,00** (Contrato CTR-2026-001)
 - **Tempo de Atraso:** **12 dias** (Vencimento original: 26/08/2026)
-- **Status do Pagamento no Asaas:** Falha de compensação / Boleto & Pix não liquidado
+- **Status do Pagamento no Demonstração:** Falha de compensação / Boleto & Pix não liquidado
 - **Impacto no Faturamento:** Representa **7,8%** do faturamento recorrente mensal (MRR)
 - **Health Score do Cliente:** Atenção (histórico anterior regular, primeiro atraso relevante)
 
 **Próxima ação recomendada:**
-Disparar notificação amigável via WhatsApp/E-mail com novo Pix Copia e Cola pelo Asaas e verificar se houve problema operacional no contas a pagar do cliente.`,
+Disparar notificação amigável via WhatsApp/E-mail com novo Pix Copia e Cola pelo Demonstração e verificar se houve problema operacional no contas a pagar do cliente.`,
       actions: [
         { label: 'Ir para Contas a Receber', route: 'financeiro-receber', description: 'Reenviar cobrança ou verificar histórico' },
         { label: 'Ver Cliente Alpha Tech', route: 'clientes', description: 'Visualizar ficha completa e contatos' },
-        { label: 'Notas & Cobranças Asaas', route: 'notas-cobrancas', description: 'Gerar novo link de pagamento Asaas' }
+        { label: 'Notas & Cobranças Demonstração', route: 'notas-cobrancas', description: 'Gerar novo link de pagamento Demonstração' }
       ]
     };
   }

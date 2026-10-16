@@ -14,7 +14,7 @@ import {
   ScopeSerie,
 } from '../types';
 import { CONFIG_PADRAO } from '../utils/constants';
-import { mesclarPrestadoresImportados } from '../data/prestadoresImportados';
+import { gerarDadosFicticios } from '../data/dadosFicticios';
 import { normalizarTextoLegivel } from '../../utils/textoLegivel';
 
 export const DATABASE_STORAGE_KEYS = {
@@ -89,81 +89,25 @@ function setItem<T>(key: string, value: T): void {
   try {
     localStorage.setItem(key, JSON.stringify(value));
     notifyListeners();
-    scheduleDatabaseSync();
   } catch (error) {
     console.error(`Erro ao salvar no storage [${key}]:`, error);
   }
-}
-
-let databaseSyncTimer: ReturnType<typeof setTimeout> | undefined;
-let databaseHydrated = false;
-
-function scheduleDatabaseSync(): void {
-  if (!databaseHydrated) return;
-  if (databaseSyncTimer) clearTimeout(databaseSyncTimer);
-  databaseSyncTimer = setTimeout(() => {
-    StorageService.sincronizarComBanco().catch(() => {
-      // O cache local continua disponível quando o servidor ou banco estiverem indisponíveis.
-    });
-  }, 500);
 }
 
 /**
  * Camada de Repositório Única (storage.ts)
  */
 export const StorageService = {
+  inicializarDemonstracao(): void {
+    if (localStorage.getItem(KEYS.DATA_MODE) !== 'interview-demo-v2') this.carregarDadosFicticios();
+  },
+
   async hidratarDoBanco(): Promise<boolean> {
-    try {
-      const response = await fetch('/api/persistence/state');
-      if (!response.ok) return false;
-      const payload = await response.json();
-      const estado = payload?.state;
-      const estadoNormalizado = estado && typeof estado === 'object'
-        ? normalizarDadosPersistidos(estado)
-        : estado;
-      const houveNormalizacao = JSON.stringify(estadoNormalizado) !== JSON.stringify(estado);
-
-      if (estadoNormalizado && typeof estadoNormalizado === 'object') {
-        Object.values(KEYS).forEach((key) => {
-          if (Object.prototype.hasOwnProperty.call(estadoNormalizado, key)) {
-            localStorage.setItem(key, JSON.stringify(estadoNormalizado[key]));
-          }
-        });
-        notifyListeners();
-      }
-
-      databaseHydrated = true;
-      const fornecedoresAtuais = this.getFornecedores();
-      const fornecedoresComImportacao = mesclarPrestadoresImportados(fornecedoresAtuais);
-      const houveImportacao = fornecedoresComImportacao.length !== fornecedoresAtuais.length;
-      if (houveImportacao) setItem(KEYS.FORNECEDORES, fornecedoresComImportacao);
-      if (!estado || houveImportacao || houveNormalizacao) await this.sincronizarComBanco();
-      return true;
-    } catch {
-      return false;
-    }
+    this.inicializarDemonstracao();
+    return false;
   },
 
-  async sincronizarComBanco(): Promise<void> {
-    const estado = Object.values(KEYS).reduce<Record<string, unknown>>((acc, key) => {
-      const value = localStorage.getItem(key);
-      if (value !== null) {
-        try {
-          acc[key] = JSON.parse(value);
-        } catch {
-          // Ignora valores legados corrompidos sem impedir os demais dados.
-        }
-      }
-      return acc;
-    }, {});
-
-    const response = await fetch('/api/persistence/state', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ state: estado }),
-    });
-    if (!response.ok) throw new Error('Não foi possível persistir os dados no banco.');
-  },
+  async sincronizarComBanco(): Promise<void> {},
 
   // === CONTAS BANCÁRIAS ===
   getContas(): ContaBancaria[] {
@@ -555,51 +499,34 @@ export const StorageService = {
     }
   },
 
-  // Mantido por compatibilidade com telas legadas: nunca carrega dados fictícios.
   carregarDadosFicticios(): void {
-    this.resetAll();
-  },
-
-  replaceAsaasSnapshot(snapshot: {
-    conta: ContaBancaria;
-    categoria?: Categoria;
-    clientes: Cliente[];
-    lancamentos: Lancamento[];
-    extratoTransacoes: ExtratoTransacao[];
-  }): void {
-    // Mantém registros criados pelo usuário (por exemplo, itens de fatura PDF)
-    // e substitui somente o espelho que veio da API do Asaas.
-    const contasManuais = this.getContas().filter((conta) => conta.id !== snapshot.conta.id);
-    const categoriasAtuais = this.getCategorias();
-    const categoriasManuais = snapshot.categoria
-      ? categoriasAtuais.filter((categoria) => categoria.id !== snapshot.categoria?.id)
-      : categoriasAtuais;
-    const lancamentosManuais = this.getLancamentos().filter((lancamento) => !lancamento.tags?.some((tag) => tag === 'asaas' || tag === 'asaas-importado'));
-    const classificacoesAnteriores = new Map(this.getExtratoTransacoes().map((movimento) => [movimento.id, movimento]));
-    const extratoPreservado = snapshot.extratoTransacoes.map((movimento) => {
-      const anterior = classificacoesAnteriores.get(movimento.id) as (ExtratoTransacao & { descricaoConciliada?: string; categoriaId?: string; categoriaNome?: string }) | undefined;
-      return anterior?.conciliado ? {
-        ...movimento,
-        conciliado: true,
-        descricaoConciliada: anterior.descricaoConciliada,
-        categoriaId: anterior.categoriaId,
-        categoriaNome: anterior.categoriaNome,
-      } : movimento;
+    // Remove o cache legado antes de carregar o conjunto de demonstracao.
+    Object.keys(localStorage).filter(key => /^(gestao_fin_|agencia_financeiro_|asaas)/i.test(key))
+      .forEach(key => localStorage.removeItem(key));
+    const dados = gerarDadosFicticios();
+    const colecoes = {
+      CONTAS: dados.contas, CATEGORIAS: dados.categorias, CLIENTES: dados.clientes,
+      FORNECEDORES: dados.fornecedores, LANCAMENTOS: dados.lancamentos,
+      CARTOES: dados.cartoes, REEMBOLSOS: dados.reembolsos, CENARIOS: dados.cenarios,
+      METAS: dados.metas, REGRAS_EXTRATO: dados.regrasExtrato, CONFIGURACOES: dados.configuracoes,
+    };
+    Object.entries(colecoes).forEach(([key, value]) => {
+      localStorage.setItem(KEYS[key as keyof typeof colecoes], JSON.stringify(value));
     });
-
-    setItem(KEYS.CONTAS, [snapshot.conta, ...contasManuais]);
-    setItem(KEYS.CATEGORIAS, snapshot.categoria ? [snapshot.categoria, ...categoriasManuais] : categoriasManuais);
-    setItem(KEYS.CLIENTES, snapshot.clientes);
-    setItem(KEYS.LANCAMENTOS, [...snapshot.lancamentos, ...lancamentosManuais]);
-    setItem(KEYS.FORNECEDORES, []);
-    setItem(KEYS.CARTOES, []);
-    setItem(KEYS.REEMBOLSOS, []);
-    setItem(KEYS.CENARIOS, []);
-    setItem(KEYS.METAS, []);
-    setItem(KEYS.REGRAS_EXTRATO, []);
-    setItem(KEYS.EXTRATO_TRANSACOES, extratoPreservado);
-    localStorage.setItem(KEYS.DATA_MODE, 'asaas-production');
-    localStorage.setItem(KEYS.CLEAN, 'true');
+    const extrato: ExtratoTransacao[] = dados.lancamentos
+      .filter(l => l.status === 'realizado' && l.contaBancariaId)
+      .map((l, i) => ({
+        id: `demo-extrato-${l.id}`, contaBancariaId: l.contaBancariaId!,
+        data: l.dataPagamento || l.dataVencimento, descricao: l.descricao,
+        valorCents: (l.tipo === 'despesa' ? -1 : 1) * (l.valorRealizado ?? l.valorOrcado),
+        conciliado: i % 3 === 0, lancamentoIdVinculado: i % 3 === 0 ? l.id : undefined,
+      }));
+    const conciliados = new Set(extrato.filter(item => item.conciliado).map(item => item.lancamentoIdVinculado));
+    localStorage.setItem(KEYS.LANCAMENTOS, JSON.stringify(dados.lancamentos.map(item => ({
+      ...item, conciliado: conciliados.has(item.id),
+    }))));
+    localStorage.setItem(KEYS.EXTRATO_TRANSACOES, JSON.stringify(extrato));
+    localStorage.setItem(KEYS.DATA_MODE, 'interview-demo-v2');
     notifyListeners();
   },
 
@@ -611,17 +538,14 @@ export const StorageService = {
     setItem(KEYS.CATEGORIAS, []);
     setItem(KEYS.CONFIGURACOES, CONFIG_PADRAO);
     localStorage.setItem(KEYS.CLEAN, 'true');
-    localStorage.setItem(KEYS.DATA_MODE, 'empty');
+    localStorage.setItem(KEYS.DATA_MODE, 'interview-demo-v2');
     notifyListeners();
   },
 };
 
-// Migração única: remove dados de demonstração e aguarda a primeira sincronização do Asaas.
+// Migra uma unica vez; edicoes posteriores da demonstracao sao preservadas.
 try {
-  if (!localStorage.getItem(KEYS.DATA_MODE)) {
-    StorageService.resetAll();
-    localStorage.setItem(KEYS.DATA_MODE, 'empty');
-  }
-} catch (e) {
-  console.warn('Storage migration check error:', e);
+  StorageService.inicializarDemonstracao();
+} catch (error) {
+  console.warn('Armazenamento da demonstracao indisponivel:', error);
 }

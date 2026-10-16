@@ -48,10 +48,13 @@
 
 .login-integration-showcase { position: absolute; right: 0; bottom: 68px; left: 0; }
 .login-integration-showcase > span { display: block; margin-bottom: 8px; color: var(--color-texto-fraco); font-size: 11px; font-weight: 800; letter-spacing: 1px; }
-.login-integration-grid { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 8px; }
+.login-integration-grid { display: grid; grid-template-columns: 1fr 1.2fr 1.2fr; gap: 10px; }
 .login-integration-logo { display: flex; align-items: center; justify-content: center; height: 58px; min-width: 0; border-radius: 10px; font-weight: 800; }
-.login-asaas { padding: 0 28px; background: linear-gradient(135deg, var(--color-primaria), var(--color-primaria-clara)); }
-.login-autentique { border: 1px solid var(--color-borda); background: var(--color-superficie); }
+.login-asaas { padding: 0 16px; background: #0030b9; }
+.login-asaas img { display: block; width: 100%; max-width: 100px; height: 24px; object-fit: contain; }
+.login-autentique { gap: 7px; padding: 0 10px; border: 1px solid var(--color-borda); background: #fff; color: #14112d; }
+.login-autentique img { display: block; flex: none; width: 30px; height: 30px; object-fit: contain; }
+.login-autentique span { font-size: 13px; font-weight: 700; letter-spacing: -.3px; }
 .login-api { justify-content: flex-start; gap: 9px; padding: 0 11px; background: var(--color-navy-solido); color: var(--color-fundo); }
 .login-api > svg { display: grid; flex: none; width: 32px; height: 32px; padding: 5px; border-radius: 8px; background: var(--color-navy-claro); }
 .login-api span, .login-api strong, .login-api small { display: block; }

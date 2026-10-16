@@ -189,7 +189,7 @@ export const ConfiguracoesView: React.FC = () => {
               <input
                 type="text"
                 disabled
-                value="12.345.678/0001-90"
+                value="00.000.000/0000-00"
                 className="w-full p-2 bg-[var(--color-fundo-sutil)] dark:bg-navy border border-[var(--color-borda)] dark:border-borda-dark text-[var(--color-texto-forte)] dark:text-texto-medio-dark rounded-[var(--radius-controle)] font-medium"
               />
             </div>
@@ -228,7 +228,7 @@ export const ConfiguracoesView: React.FC = () => {
             <div className="py-3 flex items-center justify-between">
               <div>
                 <div className="font-semibold text-[var(--color-texto-forte)] dark:text-white">Rafael Nogueira</div>
-                <div className="text-[11px] text-[var(--color-texto-medio)] dark:text-texto-medio-dark">rafael@aurorastudio.exemplo</div>
+                <div className="text-[11px] text-[var(--color-texto-medio)] dark:text-texto-medio-dark">rafael@example.com</div>
               </div>
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EEF0FD] dark:bg-navy-claro/50 text-[var(--color-primaria)] dark:text-primaria-clara">
                 Proprietário / Admin
@@ -238,7 +238,7 @@ export const ConfiguracoesView: React.FC = () => {
             <div className="py-3 flex items-center justify-between">
               <div>
                 <div className="font-semibold text-[var(--color-texto-forte)] dark:text-white">Helena Duarte</div>
-                <div className="text-[11px] text-[var(--color-texto-medio)] dark:text-texto-medio-dark">helena@aurorastudio.exemplo</div>
+                <div className="text-[11px] text-[var(--color-texto-medio)] dark:text-texto-medio-dark">helena@example.com</div>
               </div>
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sucesso-suave dark:bg-superficie-dark/50 text-sucesso dark:text-texto-forte-dark">
                 Comercial & Operação
@@ -248,7 +248,7 @@ export const ConfiguracoesView: React.FC = () => {
             <div className="py-3 flex items-center justify-between">
               <div>
                 <div className="font-semibold text-[var(--color-texto-forte)] dark:text-white">Escritório Fiscal & Contábil</div>
-                <div className="text-[11px] text-[var(--color-texto-medio)] dark:text-texto-medio-dark">contador@contabilidade.com.br</div>
+                <div className="text-[11px] text-[var(--color-texto-medio)] dark:text-texto-medio-dark">contador@example.com</div>
               </div>
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-alerta-suave dark:bg-superficie-dark/50 text-alerta dark:text-texto-forte-dark">
                 Acesso Contador (Somente Leitura)

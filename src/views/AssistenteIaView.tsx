@@ -64,7 +64,7 @@ const INITIAL_MESSAGES: ChatMessage[] = [
     role: 'assistant',
     content: `Seu saldo bancário consolidado atual é de **R$ 218.886,41**, distribuído em:
 
-- **Asaas (Conta Digital)**: R$ 142.320,00
+- **Demonstração (Conta Digital)**: R$ 142.320,00
 - **Santander PJ (Reserva)**: R$ 85.000,00
 - **Itaú Unibanco PJ**: -R$ 8.433,59 *(com 5 lançamentos pendentes de conciliação totalizando R$ 60.254,21)*`,
     timestamp: 'Hoje',
@@ -220,7 +220,7 @@ export const AssistenteIaView: React.FC<AssistenteIaViewProps> = ({
 
       if (q.includes('saldo') || q.includes('caixa') || q.includes('quanto tem')) {
         replyContent = `Seu saldo bancário consolidado atual é de **R$ 218.886,41**, distribuído em:
-- **Asaas (Conta Digital)**: R$ 142.320,00
+- **Demonstração (Conta Digital)**: R$ 142.320,00
 - **Santander PJ (Reserva)**: R$ 85.000,00
 - **Itaú Unibanco PJ**: -R$ 8.433,59 *(com 5 lançamentos pendentes de conciliação totalizando R$ 60.254,21)*`;
         replyActions = [
@@ -229,19 +229,19 @@ export const AssistenteIaView: React.FC<AssistenteIaViewProps> = ({
         ];
       } else if (q.includes('inadimpl') || q.includes('atras')) {
         replyContent = `Há **1 cliente inadimplente** no momento:
-- **Alpha Tech Solutions**: **R$ 14.500,00** em atraso há 12 dias (Contrato CTR-2026-001, cobrança Asaas vencida em 26/08/2026).`;
+- **Alpha Tech Solutions**: **R$ 14.500,00** em atraso há 12 dias (Contrato CTR-2026-001, cobrança Demonstração vencida em 26/08/2026).`;
         replyActions = [
           { label: 'Ir para Contas a Receber', route: 'financeiro-receber' },
           { label: 'Ver Cliente Alpha Tech', route: 'clientes' },
         ];
       } else if (q.includes('receber') || q.includes('semana')) {
-        replyContent = `Você tem **R$ 38.500,00** a receber nesta semana (distribuídos em 3 cobranças Asaas):
+        replyContent = `Você tem **R$ 38.500,00** a receber nesta semana (distribuídos em 3 cobranças Demonstração):
 - **Beta Incorporadora**: R$ 18.000,00 (Vencimento: 09/09/2026)
 - **Vanguard Logística**: R$ 12.500,00 (Vencimento: 10/09/2026)
 - **Delta Alimentos**: R$ 8.000,00 (Vencimento: 11/09/2026)`;
         replyActions = [
           { label: 'Ver Contas a Receber', route: 'financeiro-receber' },
-          { label: 'Notas & Cobranças Asaas', route: 'notas-cobrancas' },
+          { label: 'Notas & Cobranças Demonstração', route: 'notas-cobrancas' },
         ];
       } else if (q.includes('concilia') || q.includes('extrato')) {
         if (q.includes('como')) {
@@ -473,7 +473,7 @@ export const AssistenteIaView: React.FC<AssistenteIaViewProps> = ({
                 }}
                 className="dark:bg-fundo-dark dark:text-texto-forte-dark w-full text-left p-2 rounded-[var(--radius-controle)] text-xs text-texto-medio hover:bg-primaria-suave hover:text-[var(--color-primaria)] transition-colors flex items-center justify-between"
               >
-                <span>Notas & Cobranças Asaas</span>
+                <span>Notas & Cobranças Demonstração</span>
                 <ArrowRight className="dark:bg-fundo-dark dark:text-texto-forte-dark w-3.5 h-3.5 opacity-60" />
               </button>
             </div>
@@ -621,7 +621,7 @@ export const AssistenteIaView: React.FC<AssistenteIaViewProps> = ({
                   { id: 'clientes', label: 'Clientes (MRR & Risco)' },
                   { id: 'contratos', label: 'Contratos' },
                   { id: 'pipeline', label: 'Pipeline (Funil)' },
-                  { id: 'notas-cobrancas', label: 'Notas & Asaas' },
+                  { id: 'notas-cobrancas', label: 'Notas & Demonstração' },
                 ].map((ctx) => (
                   <button
                     key={ctx.id}

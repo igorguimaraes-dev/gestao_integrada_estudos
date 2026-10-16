@@ -73,11 +73,11 @@ export const QuickCreateModal: React.FC<QuickCreateModalProps> = ({
       id: `cli-${Date.now()}`,
       name: clientName,
       tradeName: clientName,
-      document: clientDocument || '44.102.930/0001-22',
+      document: clientDocument || '00.000.000/0000-00',
       contactName: contactName || 'Responsável Comercial',
-      contactEmail: contactEmail || 'contato@empresa.com.br',
-      contactPhone: contactPhone || '(11) 99000-1122',
-      responsible: 'Marlon Ribeiro',
+      contactEmail: contactEmail || 'contato@example.com',
+      contactPhone: contactPhone || '(00) 00000-0000',
+      responsible: 'Rafael Demo',
       services: [service],
       activeContractsCount: 1,
       monthlyRevenue: parseFloat(monthlyRevenue) || 3500,
@@ -113,8 +113,8 @@ export const QuickCreateModal: React.FC<QuickCreateModalProps> = ({
       dueDay: parseInt(dueDay) || 10,
       status: 'ativo',
       progressStep: 5,
-      asaasStatus: 'sincronizado',
-      responsible: 'Marlon Ribeiro',
+      asaasStatus: 'pendente',
+      responsible: 'Rafael Demo',
       reajusteIndex: 'IPCA anual',
     };
 
@@ -137,7 +137,7 @@ export const QuickCreateModal: React.FC<QuickCreateModalProps> = ({
       status: 'pendente',
       invoiceStatus: 'pendente',
       sentNotification: true,
-      provider: 'asaas',
+      provider: 'manual',
     };
 
     onAddReceivable(newRec);
@@ -155,7 +155,7 @@ export const QuickCreateModal: React.FC<QuickCreateModalProps> = ({
       contactName: dealContact || 'Decisor Comercial',
       amount: parseFloat(dealAmount) || 5000,
       service: dealService,
-      responsible: 'Marlon Ribeiro',
+      responsible: 'Rafael Demo',
       stage: 'novo_lead',
       nextActivity: 'Contato inicial de qualificação',
       daysInStage: 1,
@@ -259,65 +259,23 @@ export const QuickCreateModal: React.FC<QuickCreateModalProps> = ({
                     <button
                       type="button"
                       disabled={isSearchingGov}
-                      onClick={async () => {
-                        const cleanDoc = clientDocument.replace(/\D/g, '');
-                        if (cleanDoc.length === 11) {
-                          // CPF sample fallback
-                          setIsSearchingGov(true);
-                          setGovFoundMessage('');
-                          setTimeout(() => {
-                            setIsSearchingGov(false);
-                            setClientName('Carlos Eduardo da Silva');
-                            setContactName('Carlos Eduardo');
-                            setContactEmail('carlos.silva@gmail.com');
-                            setContactPhone('(11) 97123-4455');
-                            setGovFoundMessage('✓ CPF validado na base da Receita Federal');
-                          }, 500);
-                          return;
-                        }
-
-                        if (cleanDoc.length !== 14) {
-                          alert('Informe um CNPJ válido com 14 dígitos ou CPF com 11 dígitos.');
-                          return;
-                        }
-
-                        setIsSearchingGov(true);
-                        setGovFoundMessage('');
-
-                        try {
-                          const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cleanDoc}`);
-                          if (!response.ok) {
-                            throw new Error('CNPJ não encontrado na base pública.');
-                          }
-                          const data = await response.json();
-                          
-                          setClientName(data.razao_social || data.nome_fantasial || 'Empresa CNPJ');
-                          setContactName(data.qsa?.[0]?.nome || data.responsavel_legal || 'Diretoria / Sócio');
-                          setContactEmail(data.email || `contato@${cleanDoc.slice(0, 8)}.com.br`);
-                          setContactPhone(data.ddd_telefone_1 ? `(${data.ddd_telefone_1.slice(0,2)}) ${data.ddd_telefone_1.slice(2)}` : '(11) 3254-8899');
-                          
-                          setGovFoundMessage(`✓ ${data.razao_social || 'Empresa'} (Situação: ${data.descricao_situacao_cadastral || 'ATIVA'})`);
-                        } catch (err: any) {
-                          // Fallback mock if CORS or rate-limited in browser sandbox
-                          console.warn('BrasilAPI fallback triggered:', err);
-                          setClientName('Agência Digital Parceira Ltda');
-                          setContactName('Diretor Comercial');
-                          setContactEmail('contato@agenciaparceira.com.br');
-                          setContactPhone('(11) 98877-6655');
-                          setGovFoundMessage('✓ CNPJ consultado e validado com sucesso!');
-                        } finally {
-                          setIsSearchingGov(false);
-                        }
+                      onClick={() => {
+                        setClientName('Empresa Exemplo de Demonstracao');
+                        setContactName('Contato de Demonstracao');
+                        setContactEmail('contato@example.com');
+                        setContactPhone('(00) 00000-0000');
+                        setClientDocument('00.000.000/0000-00');
+                        setGovFoundMessage('Exemplo ficticio preenchido localmente.');
                       }}
                       className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark text-[11px] text-primaria hover:text-primaria font-semibold flex items-center gap-1 bg-primaria-suave hover:bg-primaria-suave px-2 py-0.5 rounded transition-colors"
                     >
-                      {isSearchingGov ? 'Consultando API...' : '🔍 Buscar CNPJ Real'}
+                      {isSearchingGov ? 'Carregando exemplo...' : '🔍 Preencher exemplo'}
                     </button>
                   </div>
                   <input
                     type="text"
                     required
-                    placeholder="00.000.000/0001-00 ou CPF"
+                    placeholder="00.000.000/0000-00 ou CPF"
                     value={clientDocument}
                     onChange={(e) => setClientDocument(e.target.value)}
                     className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark w-full px-3 py-2 border border-borda rounded-[var(--radius-controle)] focus:outline-hidden focus:border-primaria focus:ring-1 focus:ring-primaria text-xs"
@@ -345,7 +303,7 @@ export const QuickCreateModal: React.FC<QuickCreateModalProps> = ({
                   <label className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark block font-medium text-texto-medio mb-1">E-mail Financeiro</label>
                   <input
                     type="email"
-                    placeholder="financeiro@empresa.com.br"
+                    placeholder="financeiro@example.com"
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark w-full px-3 py-2 border border-borda rounded-[var(--radius-controle)] focus:outline-hidden focus:border-primaria focus:ring-1 focus:ring-primaria text-xs"
@@ -355,7 +313,7 @@ export const QuickCreateModal: React.FC<QuickCreateModalProps> = ({
                   <label className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark block font-medium text-texto-medio mb-1">WhatsApp de Cobrança</label>
                   <input
                     type="tel"
-                    placeholder="(11) 98000-0000"
+                    placeholder="(00) 00000-0000"
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
                     className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark w-full px-3 py-2 border border-borda rounded-[var(--radius-controle)] focus:outline-hidden focus:border-primaria focus:ring-1 focus:ring-primaria text-xs"
@@ -395,7 +353,7 @@ export const QuickCreateModal: React.FC<QuickCreateModalProps> = ({
                   A
                 </div>
                 <div className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark text-[11px] text-texto-medio">
-                  <span className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark font-semibold text-texto-medio">Sincronização Asaas ativa:</span> Cliente será cadastrado automaticamente na conta do Asaas para emissão de Pix e Boletos.
+                  <span className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark font-semibold text-texto-medio">Demonstracao local:</span> Cliente ficticio cadastrado apenas nesta sessao.
                 </div>
               </div>
 
@@ -559,7 +517,7 @@ export const QuickCreateModal: React.FC<QuickCreateModalProps> = ({
               </div>
 
               <div className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark p-3 bg-sucesso-suave border border-sucesso rounded-[var(--radius-card)] text-[11px] text-sucesso">
-                ⚡ A cobrança gera automaticamente o <strong>código Pix Copia e Cola</strong> e o link público Asaas com baixa automática e emissão da NFS-e.
+                ⚡ A cobranca e uma <strong>simulacao local</strong>, sem codigo de pagamento real, envio ou emissao fiscal.
               </div>
 
               <div className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark flex justify-end gap-2.5 pt-2">
@@ -574,7 +532,7 @@ export const QuickCreateModal: React.FC<QuickCreateModalProps> = ({
                   type="submit"
                   className="dark:bg-fundo-sutil-dark dark:text-texto-forte-dark px-4 py-2 bg-sucesso-suave hover:bg-sucesso-suave text-white rounded-[var(--radius-controle)] text-xs font-medium shadow-card transition-colors"
                 >
-                  Emitir Cobrança Asaas
+                  Emitir Cobrança Demonstração
                 </button>
               </div>
             </form>

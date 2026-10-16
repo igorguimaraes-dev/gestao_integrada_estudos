@@ -232,7 +232,7 @@ export const FinanceiroVisaoGeralView: React.FC<FinanceiroVisaoGeralViewProps> =
             className="dark:bg-fundo-dark dark:text-texto-forte-dark px-4 py-2 rounded-[var(--radius-controle)] bg-[var(--color-primaria)] hover:bg-primaria-suave text-white text-xs font-semibold shadow-sutil transition-colors flex items-center gap-1.5"
           >
             <span>Notas & Cobranças</span>
-            <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[10px] px-1.5 py-0.5 bg-superficie/25 rounded">Asaas</span>
+            <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[10px] px-1.5 py-0.5 bg-superficie/25 rounded">Demonstração</span>
           </button>
           <button
             onClick={() => onNavigate('financeiro-receber')}
@@ -252,13 +252,13 @@ export const FinanceiroVisaoGeralView: React.FC<FinanceiroVisaoGeralViewProps> =
       {/* Main Consolidated KPIs */}
       <div className="dark:bg-fundo-dark dark:text-texto-forte-dark grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="dark:bg-fundo-dark dark:text-texto-forte-dark bg-superficie p-5 rounded-[var(--radius-card)] border border-borda shadow-card">
-          <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs font-bold text-texto-medio uppercase tracking-wider">Saldo em Conta Asaas</span>
+          <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs font-bold text-texto-medio uppercase tracking-wider">Saldo em Conta Demonstração</span>
           <div className="dark:bg-fundo-dark dark:text-texto-forte-dark text-2xl font-bold text-texto-medio mt-2">
             {formatCurrency(184320, hideValues)}
           </div>
           <div className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-sucesso mt-1 font-medium flex items-center gap-1">
             <TrendingUp className="dark:bg-fundo-dark dark:text-texto-forte-dark w-3.5 h-3.5" />
-            <span>↗ Saldo disponível Asaas</span>
+            <span>↗ Saldo disponível Demonstração</span>
           </div>
         </div>
 
@@ -314,14 +314,14 @@ export const FinanceiroVisaoGeralView: React.FC<FinanceiroVisaoGeralViewProps> =
                   Previsão Inteligente de Caixa
                 </span>
                 <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-primaria">
-                  Baseado em 28 contratos recorrentes ativos & histórico Asaas
+                  Baseado em 28 contratos recorrentes ativos & histórico Demonstração
                 </span>
               </div>
               <h2 className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xl font-bold tracking-tight text-white">
                 Projeção de Fluxo de Caixa — Próximos 3 Meses (Q4/2026)
               </h2>
               <p className="dark:bg-fundo-dark dark:text-texto-forte-dark text-xs text-primaria/80 max-w-2xl">
-                Algoritmo preditivo considerando renovações de contratos, faturas emitidas e agendadas no Asaas, orçamento de mídia e taxa histórica de inadimplência (2.1%).
+                Algoritmo preditivo considerando renovações de contratos, faturas emitidas e agendadas no Demonstração, orçamento de mídia e taxa histórica de inadimplência (2.1%).
               </p>
             </div>
 
@@ -360,7 +360,7 @@ export const FinanceiroVisaoGeralView: React.FC<FinanceiroVisaoGeralViewProps> =
                 {formatCurrency(totalForecastEntradas, hideValues)}
               </div>
               <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-[10px] text-primaria mt-0.5 block">
-                MRR Contratado + Faturas Asaas + Sucesso
+                MRR Contratado + Faturas Demonstração + Sucesso
               </span>
             </div>
 
@@ -399,7 +399,7 @@ export const FinanceiroVisaoGeralView: React.FC<FinanceiroVisaoGeralViewProps> =
                 className="dark:bg-fundo-dark dark:text-texto-forte-dark bg-superficie rounded-[var(--radius-card)] border border-borda/80 p-5 shadow-sutil hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between"
               >
                 <div className="dark:bg-fundo-dark dark:text-texto-forte-dark absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[var(--color-primaria)] to-primaria" />
-                
+
                 <div>
                   <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex items-center justify-between mb-3 pt-1">
                     <div>
@@ -423,7 +423,7 @@ export const FinanceiroVisaoGeralView: React.FC<FinanceiroVisaoGeralViewProps> =
                     <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex items-center justify-between text-xs pb-1 border-b border-borda">
                       <span className="dark:bg-fundo-dark dark:text-texto-forte-dark text-texto-medio font-medium flex items-center gap-1.5">
                         <span className="dark:bg-fundo-dark dark:text-texto-forte-dark w-2 h-2 rounded-full bg-primaria-suave0"></span>
-                        Faturas Agendadas Asaas
+                        Faturas Agendadas Demonstração
                       </span>
                       <span className="dark:bg-fundo-dark dark:text-texto-forte-dark font-bold text-texto-medio">{formatCurrency(m.faturasEmitidasAsaas, hideValues)}</span>
                     </div>
@@ -470,7 +470,7 @@ export const FinanceiroVisaoGeralView: React.FC<FinanceiroVisaoGeralViewProps> =
                     </span>
                   </div>
                   <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex justify-between items-center text-[11px] text-texto-medio">
-                    <span>Saldo Acumulado Asaas</span>
+                    <span>Saldo Acumulado Demonstração</span>
                     <span className="dark:bg-fundo-dark dark:text-texto-forte-dark font-bold text-primaria">
                       {formatCurrency(m.saldoAcumulado, hideValues)}
                     </span>
@@ -485,7 +485,7 @@ export const FinanceiroVisaoGeralView: React.FC<FinanceiroVisaoGeralViewProps> =
             <div className="dark:bg-fundo-dark dark:text-texto-forte-dark flex items-center gap-2.5 text-primaria">
               <Sparkles className="dark:bg-fundo-dark dark:text-texto-forte-dark w-4 h-4 text-[var(--color-primaria)] shrink-0" />
               <span>
-                <strong>Destaque IA:</strong> 4 contratos de alta relevância com ciclo de renovação previsto para Novembro (+R$ 38.000/mês). Faturas recorrentes com 98.2% de taxa de conversão via Asaas Pix/Cartão.
+                <strong>Destaque IA:</strong> 4 contratos de alta relevância com ciclo de renovação previsto para Novembro (+R$ 38.000/mês). Faturas recorrentes com 98.2% de taxa de conversão via Demonstração Pix/Cartão.
               </span>
             </div>
             <button
